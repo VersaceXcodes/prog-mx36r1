@@ -1,6 +1,4 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
-import cofounder from "@/assets/cofounder.webp";
 
 const App: React.FC = () => {
 	return (
