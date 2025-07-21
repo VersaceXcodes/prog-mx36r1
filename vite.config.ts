@@ -33,6 +33,20 @@ export default defineConfig({
 
 		react(),
 	],
+	server: {
+		host: true,
+		port: 5173,
+		allowedHosts: [
+			'sandy-ecuador-compensation-amplifier.trycloudflare.com',
+			'localhost',
+			'127.0.0.1',
+			'0.0.0.0'
+		],
+		cors: {
+			origin: true,
+			credentials: true
+		}
+	},
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "./src"),
