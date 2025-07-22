@@ -37,6 +37,7 @@ export default defineConfig({
 		host: true,
 		port: 5173,
 		allowedHosts: [
+			'prog.launchpulse.ai',
 			'senator-latter-madagascar-properties.trycloudflare.com',
 			'.trycloudflare.com',
 			'localhost',

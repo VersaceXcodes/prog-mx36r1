@@ -37,13 +37,17 @@ export default defineConfig({
 		host: true,
 		port: 5173,
 		allowedHosts: [
+			'prog.launchpulse.ai',
 			'sandy-ecuador-compensation-amplifier.trycloudflare.com',
+			'.trycloudflare.com',
 			'localhost',
 			'127.0.0.1',
 			'0.0.0.0'
 		],
 		cors: {
-			origin: true,
+			origin: '*',
+			methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+			allowedHeaders: ['Content-Type', 'Authorization'],
 			credentials: true
 		}
 	},
