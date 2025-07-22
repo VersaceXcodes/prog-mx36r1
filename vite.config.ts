@@ -38,6 +38,7 @@ export default defineConfig({
 		port: 5173,
 		allowedHosts: [
 			'prog.launchpulse.ai',
+			'.launchpulse.ai',
 			'senator-latter-madagascar-properties.trycloudflare.com',
 			'.trycloudflare.com',
 			'localhost',
@@ -45,10 +46,15 @@ export default defineConfig({
 			'0.0.0.0'
 		],
 		cors: {
-			origin: '*',
+			origin: ['*', 'https://prog.launchpulse.ai', 'http://prog.launchpulse.ai'],
 			methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-			allowedHeaders: ['Content-Type', 'Authorization'],
+			allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 			credentials: true
+		},
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+			'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With'
 		}
 	},
 	resolve: {
@@ -58,5 +64,16 @@ export default defineConfig({
 	},
 	build: {
 		outDir: "public",
+		sourcemap: true,
+		rollupOptions: {
+			output: {
+				manualChunks: {
+					vendor: ['react', 'react-dom', 'react-router-dom']
+				}
+			}
+		}
+	},
+	optimizeDeps: {
+		include: ['react', 'react-dom', 'react-router-dom']
 	},
 });
