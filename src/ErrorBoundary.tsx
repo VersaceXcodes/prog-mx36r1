@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -22,6 +22,15 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // Filter out WebSocket-related errors in development
+    if (process.env.NODE_ENV === 'development' && 
+        (error.message?.includes('WebSocket') || error.message?.includes('websocket'))) {
+      console.warn('WebSocket error caught by boundary (ignoring):', error.message);
+      // Reset error state to continue normal operation
+      this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+      return;
+    }
+    
     // Log the error to console for debugging
     console.error('Application Error:', error);
     console.error('Error Info:', errorInfo);

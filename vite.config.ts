@@ -17,6 +17,18 @@ export default defineConfig({
 				});
 			},
 		},
+		// HMR fix plugin
+		{
+			name: "hmr-fix",
+			configureServer(server) {
+				server.ws.on('connection', () => {
+					console.log('WebSocket connection established');
+				});
+				server.ws.on('error', (err) => {
+					console.error('WebSocket error:', err);
+				});
+			},
+		},
 		// pre transform ; to replace/inject <GenUi*> to allow editing ui - COMMENTED OUT
 		/*
 		{
@@ -36,8 +48,10 @@ export default defineConfig({
 	server: {
 		host: true,
 		port: 5173,
+		strictPort: false,
 		allowedHosts: [
 			'prog.launchpulse.ai',
+			'123prog.launchpulse.ai',
 			'.launchpulse.ai',
 			'senator-latter-madagascar-properties.trycloudflare.com',
 			'.trycloudflare.com',
@@ -46,7 +60,7 @@ export default defineConfig({
 			'0.0.0.0'
 		],
 		cors: {
-			origin: ['*', 'https://prog.launchpulse.ai', 'http://prog.launchpulse.ai'],
+			origin: true,
 			methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 			allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 			credentials: true
@@ -55,6 +69,14 @@ export default defineConfig({
 			'Access-Control-Allow-Origin': '*',
 			'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 			'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With'
+		},
+		hmr: {
+			overlay: true,
+			clientPort: undefined
+		},
+		watch: {
+			usePolling: true,
+			interval: 1000
 		}
 	},
 	resolve: {

@@ -1,15 +1,31 @@
-import React from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import AppWrapper from "./AppWrapper.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
+import { setupWebSocketFix } from "./utils/websocket-fix.ts";
+
+// Setup WebSocket fix for development
+setupWebSocketFix();
 
 // Add global error handler
 window.addEventListener('error', (event) => {
+	// Filter out WebSocket connection errors in development
+	if (import.meta.env.DEV && event.message?.includes('WebSocket')) {
+		console.warn('WebSocket error (filtered):', event.message);
+		event.preventDefault();
+		return;
+	}
 	console.error('Global error:', event.error);
 });
 
 window.addEventListener('unhandledrejection', (event) => {
+	// Filter out WebSocket-related promise rejections
+	if (import.meta.env.DEV && event.reason?.toString?.().includes('WebSocket')) {
+		console.warn('WebSocket promise rejection (filtered):', event.reason);
+		event.preventDefault();
+		return;
+	}
 	console.error('Unhandled promise rejection:', event.reason);
 });
 
@@ -22,9 +38,11 @@ if (!rootElement) {
 try {
 	const root = createRoot(rootElement);
 	root.render(
-		<BrowserRouter>
-			<AppWrapper />
-		</BrowserRouter>
+		<StrictMode>
+			<BrowserRouter>
+				<AppWrapper />
+			</BrowserRouter>
+		</StrictMode>
 	);
 } catch (error) {
 	console.error('Failed to render application:', error);
