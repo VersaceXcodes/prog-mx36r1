@@ -1,76 +1,107 @@
 {
   "testCases": [
     {
-      "id": "app-load-basic",
-      "name": "Basic Application Load Test",
-      "category": "smoke",
+      "id": "app-basic-render",
+      "name": "Basic Application Render Test",
+      "category": "rendering",
       "priority": "critical",
-      "description": "Test that the basic React application loads without errors",
+      "description": "Test that the main application renders without errors",
       "steps": [
-        "Navigate to the application URL",
-        "Wait for the page to load completely",
-        "Verify the main heading 'Vite + React' is visible",
+        "Navigate to the application root URL",
+        "Verify the page loads successfully",
+        "Check that 'Vite + React' heading is displayed",
         "Verify no console errors are present"
       ],
-      "expectedOutcome": "Application loads successfully with Vite + React heading displayed",
+      "expectedOutcome": "Application renders successfully with main heading visible",
       "selectors": {
-        "mainHeading": "h1:contains('Vite + React')",
-        "container": ".container.mx-auto"
+        "mainContainer": ".container.mx-auto",
+        "heading": "h1",
+        "viteReactHeading": "h1:contains('Vite + React')"
       }
     },
     {
       "id": "error-boundary-functionality",
-      "name": "Error Boundary Test",
+      "name": "Error Boundary Handling Test",
       "category": "error-handling",
       "priority": "high",
-      "description": "Test that error boundary catches and displays errors properly",
+      "description": "Test error boundary catches and displays errors properly",
       "steps": [
-        "Navigate to the application",
         "Trigger a JavaScript error in a component",
         "Verify error boundary catches the error",
-        "Verify fallback UI is displayed"
+        "Check that fallback UI is displayed",
+        "Verify 'Something went wrong' message appears",
+        "Test refresh button functionality"
       ],
-      "expectedOutcome": "Error boundary displays fallback UI when errors occur",
+      "expectedOutcome": "Error boundary displays fallback UI with refresh option",
       "selectors": {
-        "errorBoundary": "[data-testid='error-boundary']",
-        "errorMessage": ".error-message"
+        "errorContainer": ".min-h-screen.flex.items-center",
+        "errorTitle": "h3:contains('Something went wrong')",
+        "refreshButton": "button:contains('Refresh Page')",
+        "errorIcon": "svg"
       }
     },
     {
-      "id": "network-handler-retry",
-      "name": "Network Handler Retry Logic Test",
-      "category": "network",
-      "priority": "high",
-      "description": "Test network handler retry functionality for failed requests",
-      "steps": [
-        "Mock a network request that fails initially",
-        "Trigger the network request through the application",
-        "Verify the request is retried according to retry logic",
-        "Verify eventual success or proper error handling"
-      ],
-      "expectedOutcome": "Network requests are retried on failure with proper error handling",
-      "selectors": {
-        "networkStatus": "[data-testid='network-status']",
-        "retryIndicator": "[data-testid='retry-indicator']"
-      }
-    },
-    {
-      "id": "ui-components-render",
-      "name": "UI Components Rendering Test",
+      "id": "ui-button-component",
+      "name": "Button Component Variants Test",
       "category": "ui-components",
       "priority": "medium",
-      "description": "Test that UI components from the library render correctly",
+      "description": "Test button component with different variants and sizes",
       "steps": [
-        "Navigate to a page with UI components",
-        "Verify button components render with correct styling",
-        "Verify input components are functional",
-        "Verify dialog components can be opened and closed"
+        "Render button with default variant",
+        "Test button with destructive variant",
+        "Test button with outline variant",
+        "Test button with different sizes (sm, lg, icon)",
+        "Verify hover states work correctly",
+        "Test disabled state"
       ],
-      "expectedOutcome": "All UI components render correctly with proper styling and functionality",
+      "expectedOutcome": "All button variants render correctly with proper styling",
       "selectors": {
-        "button": "[data-testid='ui-button']",
-        "input": "[data-testid='ui-input']",
-        "dialog": "[data-testid='ui-dialog']"
+        "defaultButton": "button.bg-neutral-900",
+        "destructiveButton": "button.bg-red-500",
+        "outlineButton": "button.border.border-neutral-200",
+        "smallButton": "button.h-9",
+        "largeButton": "button.h-11",
+        "disabledButton": "button:disabled"
+      }
+    },
+    {
+      "id": "network-handler-error-handling",
+      "name": "Network Handler Error Management Test",
+      "category": "network",
+      "priority": "high",
+      "description": "Test network error handling and retry functionality",
+      "steps": [
+        "Make a request to a non-existent endpoint",
+        "Verify 404 error is handled properly",
+        "Test retry mechanism with failing requests",
+        "Test successful request after retries",
+        "Verify proper error messages are displayed"
+      ],
+      "expectedOutcome": "Network errors are handled gracefully with appropriate messages",
+      "selectors": {
+        "errorMessage": "[data-testid='network-error']",
+        "retryButton": "[data-testid='retry-button']",
+        "loadingIndicator": "[data-testid='loading']"
+      }
+    },
+    {
+      "id": "routing-navigation",
+      "name": "React Router Navigation Test",
+      "category": "navigation",
+      "priority": "medium",
+      "description": "Test React Router navigation functionality",
+      "steps": [
+        "Navigate to different routes",
+        "Test browser back/forward buttons",
+        "Verify URL changes correctly",
+        "Test catch-all route handling",
+        "Verify page refresh maintains route"
+      ],
+      "expectedOutcome": "Navigation works correctly with proper URL updates",
+      "selectors": {
+        "routerOutlet": "[data-testid='router-outlet']",
+        "navigationLinks": "a[href]",
+        "currentRoute": "[data-testid='current-route']"
       }
     },
     {
@@ -78,18 +109,22 @@
       "name": "Toast Notification System Test",
       "category": "notifications",
       "priority": "medium",
-      "description": "Test toast notification system functionality",
+      "description": "Test toast notification display and dismissal",
       "steps": [
-        "Trigger a toast notification",
-        "Verify toast appears with correct message",
-        "Verify toast auto-dismisses after timeout",
-        "Test multiple toast notifications"
+        "Trigger a success toast notification",
+        "Verify toast appears with correct styling",
+        "Test toast auto-dismissal after timeout",
+        "Test manual toast dismissal",
+        "Test multiple toasts stacking",
+        "Test different toast variants (error, warning, info)"
       ],
-      "expectedOutcome": "Toast notifications display correctly and dismiss properly",
+      "expectedOutcome": "Toast notifications display correctly and can be dismissed",
       "selectors": {
         "toastContainer": "[data-testid='toast-container']",
-        "toastMessage": "[data-testid='toast-message']",
-        "toastDismiss": "[data-testid='toast-dismiss']"
+        "successToast": "[data-testid='toast-success']",
+        "errorToast": "[data-testid='toast-error']",
+        "toastDismiss": "[data-testid='toast-dismiss']",
+        "toastMessage": "[data-testid='toast-message']"
       }
     },
     {
@@ -99,17 +134,102 @@
       "priority": "medium",
       "description": "Test application responsiveness across different screen sizes",
       "steps": [
-        "Load application on desktop viewport",
-        "Verify layout is correct for desktop",
-        "Resize to tablet viewport",
-        "Verify layout adapts correctly",
-        "Resize to mobile viewport",
-        "Verify mobile layout is functional"
+        "Test application on mobile viewport (375px)",
+        "Test application on tablet viewport (768px)",
+        "Test application on desktop viewport (1024px)",
+        "Verify container width adjusts properly (xl:w-[60vw])",
+        "Test component layout on different screen sizes"
       ],
-      "expectedOutcome": "Application layout adapts correctly to different screen sizes",
+      "expectedOutcome": "Application displays correctly on all screen sizes",
       "selectors": {
         "mainContainer": ".container.mx-auto.w-full.xl\\:w-\\[60vw\\]",
-        "responsiveElement": "[data-testid='responsive-element']"
+        "responsiveElements": "[class*='sm:'], [class*='md:'], [class*='lg:'], [class*='xl:']"
+      }
+    },
+    {
+      "id": "form-components-validation",
+      "name": "Form Components and Validation Test",
+      "category": "forms",
+      "priority": "high",
+      "description": "Test form components with React Hook Form and Zod validation",
+      "steps": [
+        "Render a form with input components",
+        "Test form validation with empty fields",
+        "Test form validation with invalid data",
+        "Test successful form submission",
+        "Verify error messages display correctly",
+        "Test form reset functionality"
+      ],
+      "expectedOutcome": "Form validation works correctly with proper error handling",
+      "selectors": {
+        "formContainer": "form",
+        "inputField": "input",
+        "submitButton": "button[type='submit']",
+        "errorMessage": "[data-testid='field-error']",
+        "validationError": ".text-red-500"
+      }
+    },
+    {
+      "id": "accessibility-compliance",
+      "name": "Accessibility Compliance Test",
+      "category": "accessibility",
+      "priority": "high",
+      "description": "Test application accessibility features and compliance",
+      "steps": [
+        "Test keyboard navigation through components",
+        "Verify ARIA labels are present on interactive elements",
+        "Test screen reader compatibility",
+        "Check color contrast ratios",
+        "Test focus management and indicators",
+        "Verify semantic HTML structure"
+      ],
+      "expectedOutcome": "Application meets accessibility standards and guidelines",
+      "selectors": {
+        "focusableElements": "button, input, select, textarea, a[href]",
+        "ariaLabels": "[aria-label], [aria-labelledby]",
+        "headingStructure": "h1, h2, h3, h4, h5, h6",
+        "skipLinks": "[data-testid='skip-link']"
+      }
+    },
+    {
+      "id": "performance-optimization",
+      "name": "Performance Optimization Test",
+      "category": "performance",
+      "priority": "medium",
+      "description": "Test application performance and loading times",
+      "steps": [
+        "Measure initial page load time",
+        "Test component rendering performance",
+        "Verify lazy loading of components",
+        "Test memory usage during navigation",
+        "Check for memory leaks",
+        "Measure bundle size and optimization"
+      ],
+      "expectedOutcome": "Application performs well with optimized loading times",
+      "selectors": {
+        "performanceMetrics": "[data-testid='performance-metrics']",
+        "loadingIndicators": "[data-testid='loading']",
+        "lazyComponents": "[data-testid='lazy-component']"
+      }
+    },
+    {
+      "id": "backend-api-integration",
+      "name": "Backend API Integration Test",
+      "category": "api-integration",
+      "priority": "critical",
+      "description": "Test integration with backend API endpoints",
+      "steps": [
+        "Test connection to backend health check endpoint (/)",
+        "Verify CORS configuration works correctly",
+        "Test API error handling for failed requests",
+        "Test API response parsing and data handling",
+        "Verify proper HTTP status code handling"
+      ],
+      "expectedOutcome": "Frontend successfully integrates with backend API",
+      "selectors": {
+        "apiStatus": "[data-testid='api-status']",
+        "apiError": "[data-testid='api-error']",
+        "apiResponse": "[data-testid='api-response']"
       }
     },
     {
@@ -117,35 +237,21 @@
       "name": "Theme Switching Test",
       "category": "theming",
       "priority": "low",
-      "description": "Test dark/light theme switching functionality if available",
+      "description": "Test dark/light theme switching functionality",
       "steps": [
-        "Navigate to the application",
-        "Locate theme toggle if present",
-        "Switch between light and dark themes",
-        "Verify theme changes are applied correctly"
+        "Test default theme application",
+        "Switch to dark theme",
+        "Verify dark theme styles are applied",
+        "Switch back to light theme",
+        "Test theme persistence across page reloads",
+        "Verify all components support both themes"
       ],
-      "expectedOutcome": "Theme switching works correctly with proper visual changes",
+      "expectedOutcome": "Theme switching works correctly with proper style application",
       "selectors": {
         "themeToggle": "[data-testid='theme-toggle']",
-        "themeIndicator": "[data-theme]"
-      }
-    },
-    {
-      "id": "api-endpoint-health",
-      "name": "API Endpoint Health Check",
-      "category": "api",
-      "priority": "critical",
-      "description": "Test that API endpoints are accessible and responding",
-      "steps": [
-        "Make a request to the root endpoint '/'",
-        "Verify response status is 200",
-        "Verify response contains expected content",
-        "Test catch-all route functionality"
-      ],
-      "expectedOutcome": "API endpoints respond correctly with expected status codes",
-      "selectors": {
-        "apiResponse": "[data-testid='api-response']",
-        "healthStatus": "[data-testid='health-status']"
+        "darkThemeElements": ".dark",
+        "lightThemeElements": ":not(.dark)",
+        "themeIndicator": "[data-testid='current-theme']"
       }
     }
   ]
