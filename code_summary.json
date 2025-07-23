@@ -24,75 +24,66 @@
       "name": "Basic React Application",
       "description": "Simple React application with Vite + React setup",
       "files": [
-        "vitereact/src/App.tsx",
-        "vitereact/src/AppWrapper.tsx",
-        "vitereact/src/main.tsx"
+        "src/App.tsx",
+        "src/AppWrapper.tsx",
+        "src/main.tsx"
       ]
     },
     {
       "name": "UI Component Library",
       "description": "Comprehensive UI component library based on Radix UI primitives",
       "files": [
-        "vitereact/src/components/ui/accordion.tsx",
-        "vitereact/src/components/ui/alert.tsx",
-        "vitereact/src/components/ui/avatar.tsx",
-        "vitereact/src/components/ui/badge.tsx",
-        "vitereact/src/components/ui/button.tsx",
-        "vitereact/src/components/ui/card.tsx",
-        "vitereact/src/components/ui/dialog.tsx",
-        "vitereact/src/components/ui/dropdown-menu.tsx",
-        "vitereact/src/components/ui/form.tsx",
-        "vitereact/src/components/ui/input.tsx",
-        "vitereact/src/components/ui/select.tsx",
-        "vitereact/src/components/ui/table.tsx",
-        "vitereact/src/components/ui/tabs.tsx",
-        "vitereact/src/components/ui/toast.tsx"
+        "src/components/ui/accordion.tsx",
+        "src/components/ui/alert.tsx",
+        "src/components/ui/avatar.tsx",
+        "src/components/ui/badge.tsx",
+        "src/components/ui/button.tsx",
+        "src/components/ui/card.tsx",
+        "src/components/ui/dialog.tsx",
+        "src/components/ui/dropdown-menu.tsx",
+        "src/components/ui/form.tsx",
+        "src/components/ui/input.tsx",
+        "src/components/ui/select.tsx",
+        "src/components/ui/table.tsx",
+        "src/components/ui/tabs.tsx",
+        "src/components/ui/toast.tsx"
+      ]
+    },
+    {
+      "name": "Network Handler",
+      "description": "HTTP request handling with error management and retry logic",
+      "files": [
+        "src/utils/networkHandler.ts"
       ]
     },
     {
       "name": "Toast Notification System",
       "description": "Custom toast notification system with state management",
       "files": [
-        "vitereact/src/hooks/use-toast.ts",
-        "vitereact/src/components/ui/toast.tsx",
-        "vitereact/src/components/ui/toaster.tsx"
+        "src/hooks/use-toast.ts",
+        "src/components/ui/toast.tsx",
+        "src/components/ui/toaster.tsx"
       ]
     },
     {
       "name": "Utility Functions",
       "description": "Common utility functions for styling and class management",
       "files": [
-        "vitereact/src/lib/utils.ts"
+        "src/lib/utils.ts"
       ]
     },
     {
       "name": "Error Boundary",
       "description": "React error boundary for handling application errors",
       "files": [
-        "vitereact/src/ErrorBoundary.tsx"
-      ]
-    },
-    {
-      "name": "Backend API Server",
-      "description": "Express.js server with PostgreSQL database connection and static file serving",
-      "files": [
-        "server.js",
-        "backend/server.js"
+        "src/ErrorBoundary.tsx"
       ]
     }
   ],
   "database_tables": [],
   "api_endpoints": [
-    {
-      "method": "GET",
-      "path": "/",
-      "description": "Health check endpoint returning backend boilerplate message"
-    },
-    {
-      "method": "GET", 
-      "path": "/*",
-      "description": "Catch-all route for SPA routing, serves index.html"
-    }
+    "/",
+    "/*"
   ],
   "project_structure": {
     "frontend": {
