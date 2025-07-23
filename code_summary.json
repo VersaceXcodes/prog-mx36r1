@@ -1,0 +1,133 @@
+{
+  "tech_stack": [
+    "React",
+    "TypeScript",
+    "Vite",
+    "Express.js",
+    "Node.js",
+    "PostgreSQL",
+    "Tailwind CSS",
+    "Radix UI",
+    "Redux Toolkit",
+    "React Router",
+    "React Hook Form",
+    "Zod",
+    "Framer Motion",
+    "Lucide React",
+    "Axios",
+    "Socket.io Client",
+    "Recharts",
+    "Date-fns"
+  ],
+  "features": [
+    {
+      "name": "Basic React Application",
+      "description": "Simple React application with Vite + React setup",
+      "files": [
+        "vitereact/src/App.tsx",
+        "vitereact/src/AppWrapper.tsx",
+        "vitereact/src/main.tsx"
+      ]
+    },
+    {
+      "name": "UI Component Library",
+      "description": "Comprehensive UI component library based on Radix UI primitives",
+      "files": [
+        "vitereact/src/components/ui/accordion.tsx",
+        "vitereact/src/components/ui/alert.tsx",
+        "vitereact/src/components/ui/avatar.tsx",
+        "vitereact/src/components/ui/badge.tsx",
+        "vitereact/src/components/ui/button.tsx",
+        "vitereact/src/components/ui/card.tsx",
+        "vitereact/src/components/ui/dialog.tsx",
+        "vitereact/src/components/ui/dropdown-menu.tsx",
+        "vitereact/src/components/ui/form.tsx",
+        "vitereact/src/components/ui/input.tsx",
+        "vitereact/src/components/ui/select.tsx",
+        "vitereact/src/components/ui/table.tsx",
+        "vitereact/src/components/ui/tabs.tsx",
+        "vitereact/src/components/ui/toast.tsx"
+      ]
+    },
+    {
+      "name": "Toast Notification System",
+      "description": "Custom toast notification system with state management",
+      "files": [
+        "vitereact/src/hooks/use-toast.ts",
+        "vitereact/src/components/ui/toast.tsx",
+        "vitereact/src/components/ui/toaster.tsx"
+      ]
+    },
+    {
+      "name": "Utility Functions",
+      "description": "Common utility functions for styling and class management",
+      "files": [
+        "vitereact/src/lib/utils.ts"
+      ]
+    },
+    {
+      "name": "Error Boundary",
+      "description": "React error boundary for handling application errors",
+      "files": [
+        "vitereact/src/ErrorBoundary.tsx"
+      ]
+    },
+    {
+      "name": "Backend API Server",
+      "description": "Express.js server with PostgreSQL database connection and static file serving",
+      "files": [
+        "server.js",
+        "backend/server.js"
+      ]
+    }
+  ],
+  "database_tables": [],
+  "api_endpoints": [
+    {
+      "method": "GET",
+      "path": "/",
+      "description": "Health check endpoint returning backend boilerplate message"
+    },
+    {
+      "method": "GET", 
+      "path": "/*",
+      "description": "Catch-all route for SPA routing, serves index.html"
+    }
+  ],
+  "project_structure": {
+    "frontend": {
+      "framework": "React with Vite",
+      "location": "vitereact/",
+      "build_tool": "Vite",
+      "styling": "Tailwind CSS",
+      "ui_library": "Radix UI",
+      "state_management": "Redux Toolkit",
+      "routing": "React Router",
+      "forms": "React Hook Form with Zod validation"
+    },
+    "backend": {
+      "framework": "Express.js",
+      "database": "PostgreSQL",
+      "location": "server.js, backend/server.js"
+    }
+  },
+  "development_setup": {
+    "frontend_dev": "npm run dev (Vite dev server)",
+    "build": "npm run build",
+    "lint": "npm run lint",
+    "preview": "npm run preview"
+  },
+  "key_dependencies": {
+    "ui_components": "@radix-ui/* components",
+    "state_management": "@reduxjs/toolkit, react-redux, redux-persist",
+    "forms": "react-hook-form, @hookform/resolvers, zod",
+    "styling": "tailwindcss, class-variance-authority, clsx, tailwind-merge",
+    "routing": "react-router-dom",
+    "http_client": "axios",
+    "animations": "framer-motion",
+    "icons": "lucide-react",
+    "charts": "recharts",
+    "date_handling": "date-fns",
+    "real_time": "socket.io-client"
+  }
+}

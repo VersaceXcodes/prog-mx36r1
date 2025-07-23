@@ -1,0 +1,117 @@
+{
+  "users": [
+    {
+      "role": "admin",
+      "email": "admin@conductor.test",
+      "password": "Admin123!",
+      "name": "Admin User",
+      "firstName": "Admin",
+      "lastName": "User",
+      "id": "admin-001",
+      "permissions": ["read", "write", "delete", "admin"],
+      "createdAt": "2024-01-01T00:00:00Z",
+      "isActive": true
+    },
+    {
+      "role": "user",
+      "email": "user@conductor.test",
+      "password": "User123!",
+      "name": "Regular User",
+      "firstName": "Regular",
+      "lastName": "User", 
+      "id": "user-001",
+      "permissions": ["read", "write"],
+      "createdAt": "2024-01-02T00:00:00Z",
+      "isActive": true
+    },
+    {
+      "role": "moderator",
+      "email": "moderator@conductor.test",
+      "password": "Mod123!",
+      "name": "Moderator User",
+      "firstName": "Moderator",
+      "lastName": "User",
+      "id": "mod-001", 
+      "permissions": ["read", "write", "moderate"],
+      "createdAt": "2024-01-03T00:00:00Z",
+      "isActive": true
+    },
+    {
+      "role": "viewer",
+      "email": "viewer@conductor.test",
+      "password": "View123!",
+      "name": "Viewer User",
+      "firstName": "Viewer",
+      "lastName": "User",
+      "id": "viewer-001",
+      "permissions": ["read"],
+      "createdAt": "2024-01-04T00:00:00Z",
+      "isActive": true
+    },
+    {
+      "role": "user",
+      "email": "inactive@conductor.test",
+      "password": "Inactive123!",
+      "name": "Inactive User",
+      "firstName": "Inactive",
+      "lastName": "User",
+      "id": "inactive-001",
+      "permissions": ["read"],
+      "createdAt": "2024-01-05T00:00:00Z",
+      "isActive": false
+    },
+    {
+      "role": "user",
+      "email": "testuser1@conductor.test",
+      "password": "Test123!",
+      "name": "Test User One",
+      "firstName": "Test",
+      "lastName": "One",
+      "id": "test-001",
+      "permissions": ["read", "write"],
+      "createdAt": "2024-01-06T00:00:00Z",
+      "isActive": true
+    },
+    {
+      "role": "user",
+      "email": "testuser2@conductor.test", 
+      "password": "Test456!",
+      "name": "Test User Two",
+      "firstName": "Test",
+      "lastName": "Two",
+      "id": "test-002",
+      "permissions": ["read", "write"],
+      "createdAt": "2024-01-07T00:00:00Z",
+      "isActive": true
+    },
+    {
+      "role": "guest",
+      "email": "guest@conductor.test",
+      "password": "Guest123!",
+      "name": "Guest User",
+      "firstName": "Guest",
+      "lastName": "User",
+      "id": "guest-001",
+      "permissions": ["read"],
+      "createdAt": "2024-01-08T00:00:00Z",
+      "isActive": true
+    }
+  ],
+  "test_scenarios": {
+    "valid_login": {
+      "admin": "admin@conductor.test / Admin123!",
+      "user": "user@conductor.test / User123!",
+      "moderator": "moderator@conductor.test / Mod123!"
+    },
+    "invalid_login": {
+      "wrong_password": "admin@conductor.test / WrongPassword",
+      "wrong_email": "nonexistent@conductor.test / Admin123!",
+      "inactive_user": "inactive@conductor.test / Inactive123!"
+    },
+    "edge_cases": {
+      "empty_fields": "",
+      "sql_injection": "admin@conductor.test'; DROP TABLE users; --",
+      "xss_attempt": "<script>alert('xss')</script>@conductor.test"
+    }
+  }
+}
