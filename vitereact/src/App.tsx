@@ -11,9 +11,7 @@ interface Todo {
 
 type FilterType = 'all' | 'active' | 'completed';
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-	? 'https://123testing-project-yes-api.launchpulse.ai' 
-	: 'http://localhost:3000';
+const API_BASE_URL = 'https://123testing-project-yes-api.launchpulse.ai';
 
 const App: React.FC = () => {
 	const [todos, setTodos] = useState<Todo[]>([]);
