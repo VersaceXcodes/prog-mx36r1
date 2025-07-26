@@ -1,2 +1,14 @@
 -- COMMANDS FOR DB TABLES
+CREATE TABLE IF NOT EXISTS todos (
+    id SERIAL PRIMARY KEY,
+    text TEXT NOT NULL,
+    completed BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- COMMANDS FOR DB SEED
+INSERT INTO todos (text, completed) VALUES 
+('Sample todo item', false),
+('Completed sample', true)
+ON CONFLICT DO NOTHING;
