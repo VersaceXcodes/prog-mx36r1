@@ -37,10 +37,16 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://123testing-project-yes.launchpulse.ai'],
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://123testing-project-yes.launchpulse.ai',
+    /^https:\/\/.*\.launchpulse\.ai$/
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200
 }));
 
 app.use(express.json({ limit: "5mb" }));
