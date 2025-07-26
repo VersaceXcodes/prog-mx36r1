@@ -12,7 +12,7 @@ interface Todo {
 type FilterType = 'all' | 'active' | 'completed';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-	? 'https://123testing-project-yes.launchpulse.ai' 
+	? 'https://123testing-project-yes-api.launchpulse.ai' 
 	: 'http://localhost:3000';
 
 const App: React.FC = () => {
@@ -30,11 +30,21 @@ const App: React.FC = () => {
 		try {
 			setLoading(true);
 			setError(null);
-			const response = await axios.get(`${API_BASE_URL}/api/todos`);
-			setTodos(response.data);
-		} catch (err) {
-			setError('Failed to fetch todos');
+			console.log('Fetching todos from:', `${API_BASE_URL}/api/todos`);
+			const response = await axios.get(`${API_BASE_URL}/api/todos`, {
+				timeout: 10000,
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				}
+			});
+			console.log('Fetched todos:', response.data);
+			setTodos(Array.isArray(response.data) ? response.data : []);
+		} catch (err: any) {
+			const errorMessage = err.response?.data?.error || err.message || 'Failed to fetch todos';
+			setError(`Failed to fetch todos: ${errorMessage}`);
 			console.error('Error fetching todos:', err);
+			setTodos([]);
 		} finally {
 			setLoading(false);
 		}
@@ -45,13 +55,22 @@ const App: React.FC = () => {
 		
 		try {
 			setError(null);
+			console.log('Adding todo:', newTodoText.trim());
 			const response = await axios.post(`${API_BASE_URL}/api/todos`, {
 				text: newTodoText.trim()
+			}, {
+				timeout: 10000,
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				}
 			});
+			console.log('Added todo:', response.data);
 			setTodos([response.data, ...todos]);
 			setNewTodoText("");
-		} catch (err) {
-			setError('Failed to add todo');
+		} catch (err: any) {
+			const errorMessage = err.response?.data?.error || err.message || 'Failed to add todo';
+			setError(`Failed to add todo: ${errorMessage}`);
 			console.error('Error adding todo:', err);
 		}
 	};
@@ -59,14 +78,23 @@ const App: React.FC = () => {
 	const toggleTodo = async (id: number, completed: boolean) => {
 		try {
 			setError(null);
+			console.log(`Toggling todo ${id} to ${!completed}`);
 			const response = await axios.put(`${API_BASE_URL}/api/todos/${id}`, {
 				completed: !completed
+			}, {
+				timeout: 10000,
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				}
 			});
+			console.log('Updated todo:', response.data);
 			setTodos(todos.map(todo => 
 				todo.id === id ? response.data : todo
 			));
-		} catch (err) {
-			setError('Failed to update todo');
+		} catch (err: any) {
+			const errorMessage = err.response?.data?.error || err.message || 'Failed to update todo';
+			setError(`Failed to update todo: ${errorMessage}`);
 			console.error('Error updating todo:', err);
 		}
 	};
@@ -74,10 +102,18 @@ const App: React.FC = () => {
 	const deleteTodo = async (id: number) => {
 		try {
 			setError(null);
-			await axios.delete(`${API_BASE_URL}/api/todos/${id}`);
+			console.log(`Deleting todo ${id}`);
+			await axios.delete(`${API_BASE_URL}/api/todos/${id}`, {
+				timeout: 10000,
+				headers: {
+					'Accept': 'application/json'
+				}
+			});
+			console.log(`Deleted todo ${id}`);
 			setTodos(todos.filter(todo => todo.id !== id));
-		} catch (err) {
-			setError('Failed to delete todo');
+		} catch (err: any) {
+			const errorMessage = err.response?.data?.error || err.message || 'Failed to delete todo';
+			setError(`Failed to delete todo: ${errorMessage}`);
 			console.error('Error deleting todo:', err);
 		}
 	};
