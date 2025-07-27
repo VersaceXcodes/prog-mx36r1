@@ -11,7 +11,9 @@ interface Todo {
 
 type FilterType = 'all' | 'active' | 'completed';
 
-const API_BASE_URL = 'https://123testing-project-yes-api.launchpulse.ai';
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+	? 'https://123testing-project-yes-api.launchpulse.ai'
+	: 'http://localhost:3000';
 
 const App: React.FC = () => {
 	const [todos, setTodos] = useState<Todo[]>([]);
@@ -99,6 +101,10 @@ const App: React.FC = () => {
 				return;
 			}
 			
+			if (response.status >= 400) {
+				throw new Error(`HTTP ${response.status}: ${response.data?.error || 'Request failed'}`);
+			}
+			
 			console.log('Added todo:', response.data);
 			setTodos([response.data, ...todos]);
 			setNewTodoText("");
@@ -173,6 +179,10 @@ const App: React.FC = () => {
 				console.log(`502 error deleting todo, retrying... (attempt ${retryCount + 1})`);
 				setTimeout(() => deleteTodo(id, retryCount + 1), 1000 * (retryCount + 1));
 				return;
+			}
+			
+			if (response.status >= 400) {
+				throw new Error(`HTTP ${response.status}: ${response.data?.error || 'Request failed'}`);
 			}
 			
 			console.log(`Deleted todo ${id}`);

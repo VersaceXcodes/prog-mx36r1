@@ -11,8 +11,14 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Initialize SQLite database
-const db = new sqlite3.Database(path.join(__dirname, 'todos.db'));
+// Initialize SQLite database with error handling
+const db = new sqlite3.Database(path.join(__dirname, 'todos.db'), (err) => {
+  if (err) {
+    console.error('Error opening database:', err.message);
+    process.exit(1);
+  }
+  console.log('Connected to SQLite database');
+});
 
 // Initialize database schema
 db.serialize(() => {
@@ -39,16 +45,28 @@ const port = process.env.PORT || 3000;
 
 // Enhanced CORS configuration with additional headers
 app.use(cors({
-  origin: [
-    'https://sandy-ecuador-compensation-amplifier.trycloudflare.com',
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'http://127.0.0.1:5173',
-    'http://127.0.0.1:3000',
-    'https://123testing-project-yes.launchpulse.ai',
-    'https://123testing-project-yes-api.launchpulse.ai',
-    /^https:\/\/.*\.launchpulse\.ai$/
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'https://sandy-ecuador-compensation-amplifier.trycloudflare.com',
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:3000',
+      'https://123testing-project-yes.launchpulse.ai',
+      'https://123testing-project-yes-api.launchpulse.ai'
+    ];
+    
+    // Check if origin is in allowed list or matches launchpulse.ai pattern
+    if (allowedOrigins.includes(origin) || /^https:\/\/.*\.launchpulse\.ai$/.test(origin)) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
   allowedHeaders: [
@@ -79,7 +97,11 @@ app.use((_req, res, next) => {
   const timeout = setTimeout(() => {
     if (!res.headersSent) {
       console.log('Request timeout');
-      res.status(408).json({ error: 'Request timeout' });
+      res.status(408).json({ 
+        error: 'Request timeout',
+        timestamp: new Date().toISOString(),
+        status: 'timeout'
+      });
     }
   }, 30000);
   
@@ -118,15 +140,54 @@ app.use(express.static(path.join(__dirname, 'public'), {
 }));
 
 app.get("/", (_req, res) => {
-  res.json({ message: "Todo API Server", status: "running", timestamp: new Date().toISOString() });
+  res.setHeader('Content-Type', 'application/json');
+  res.json({ 
+    message: "Todo API Server", 
+    status: "running", 
+    timestamp: new Date().toISOString(),
+    version: "1.0.0",
+    endpoints: [
+      "GET /api/health",
+      "GET /api/todos",
+      "POST /api/todos",
+      "PUT /api/todos/:id",
+      "DELETE /api/todos/:id"
+    ]
+  });
 });
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "healthy", timestamp: new Date().toISOString() });
+  res.setHeader('Content-Type', 'application/json');
+  res.json({ 
+    status: "healthy", 
+    timestamp: new Date().toISOString(),
+    database: "connected",
+    uptime: process.uptime()
+  });
 });
 
 app.get("/api/health", (_req, res) => {
-  res.json({ status: "healthy", timestamp: new Date().toISOString() });
+  res.setHeader('Content-Type', 'application/json');
+  
+  // Test database connection
+  db.get("SELECT 1 as test", (err) => {
+    if (err) {
+      console.error('Database health check failed:', err);
+      return res.status(503).json({ 
+        status: "unhealthy", 
+        timestamp: new Date().toISOString(),
+        database: "disconnected",
+        error: err.message
+      });
+    }
+    
+    res.json({ 
+      status: "healthy", 
+      timestamp: new Date().toISOString(),
+      database: "connected",
+      uptime: process.uptime()
+    });
+  });
 });
 
 // Handle preflight OPTIONS requests explicitly
@@ -384,7 +445,13 @@ app.delete("/api/todos/:id", (req, res) => {
 
 // 404 handler for API routes (must come before static files)
 app.use('/api/*', (req, res) => {
-  res.status(404).json({ error: 'API endpoint not found', path: req.path });
+  res.setHeader('Content-Type', 'application/json');
+  res.status(404).json({ 
+    error: 'API endpoint not found', 
+    path: req.path,
+    timestamp: new Date().toISOString(),
+    status: 'not_found'
+  });
 });
 
 // Serve static files from the dist directory (after API routes)
@@ -393,10 +460,17 @@ app.use(express.static(path.join(__dirname, 'dist')));
 // Global error handler
 app.use((err, _req, res, _next) => {
   console.error('Unhandled error:', err);
-  res.status(500).json({ 
-    error: 'Internal server error', 
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
-  });
+  
+  // Ensure we always send JSON response
+  if (!res.headersSent) {
+    res.setHeader('Content-Type', 'application/json');
+    res.status(500).json({ 
+      error: 'Internal server error', 
+      message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
+      timestamp: new Date().toISOString(),
+      status: 'error'
+    });
+  }
 });
 
 // Catch-all route for SPA routing
