@@ -9,6 +9,8 @@ interface Todo {
 	updated_at: string;
 }
 
+
+
 type FilterType = 'all' | 'active' | 'completed';
 
 const API_BASE_URL = 'https://123testing-project-yes-api.launchpulse.ai';
@@ -61,9 +63,8 @@ const App: React.FC = () => {
 			
 			console.log('Fetched todos:', response.data);
 			setTodos(Array.isArray(response.data) ? response.data : []);
-		} catch (err: any) {
-			if (err.code === 'ECONNABORTED' && retryCount < 3) {
-				console.log(`Timeout error, retrying... (attempt ${retryCount + 1})`);
+	} catch (err: any) {
+		if (err.code === 'ECONNABORTED' && retryCount < 3) {				console.log(`Timeout error, retrying... (attempt ${retryCount + 1})`);
 				setTimeout(() => fetchTodos(retryCount + 1), 2000 * (retryCount + 1));
 				return;
 			}
@@ -104,10 +105,9 @@ const App: React.FC = () => {
 				throw new Error(`HTTP ${response.status}: ${response.data?.error || 'Request failed'}`);
 			}
 			
-			console.log('Added todo:', response.data);
-			setTodos([response.data, ...todos]);
-			setNewTodoText("");
-		} catch (err: any) {
+		console.log('Added todo:', response.data);
+		setTodos(prevTodos => [response.data, ...(Array.isArray(prevTodos) ? prevTodos : [])]);
+		setNewTodoText("");		} catch (err: any) {
 			if ((err.code === 'ECONNABORTED' || err.response?.status === 502) && retryCount < 3) {
 				console.log(`Error adding todo, retrying... (attempt ${retryCount + 1})`);
 				setTimeout(() => addTodoWithRetry(retryCount + 1), 2000 * (retryCount + 1));
@@ -145,11 +145,10 @@ const App: React.FC = () => {
 				return;
 			}
 			
-			console.log('Updated todo:', response.data);
-			setTodos(todos.map(todo => 
-				todo.id === id ? response.data : todo
-			));
-		} catch (err: any) {
+		console.log('Updated todo:', response.data);
+		setTodos(prevTodos => Array.isArray(prevTodos) ? prevTodos.map(todo => 
+			todo.id === id ? response.data : todo
+		) : []);		} catch (err: any) {
 			if ((err.code === 'ECONNABORTED' || err.response?.status === 502) && retryCount < 3) {
 				console.log(`Error toggling todo, retrying... (attempt ${retryCount + 1})`);
 				setTimeout(() => toggleTodo(id, completed, retryCount + 1), 2000 * (retryCount + 1));
@@ -193,9 +192,8 @@ const App: React.FC = () => {
 				throw new Error(`HTTP ${response.status}: ${response.data?.error || 'Request failed'}`);
 			}
 			
-			console.log(`Deleted todo ${id}`);
-			setTodos(todos.filter(todo => todo.id !== id));
-			
+		console.log(`Deleted todo ${id}`);
+		setTodos(prevTodos => Array.isArray(prevTodos) ? prevTodos.filter(todo => todo.id !== id) : []);			
 		} catch (err: any) {
 			if ((err.code === 'ECONNABORTED' || err.response?.status === 502) && retryCount < 3) {
 				console.log(`Error deleting todo, retrying... (attempt ${retryCount + 1})`);
@@ -216,7 +214,7 @@ const App: React.FC = () => {
 		}
 	};
 
-	const filteredTodos = todos.filter(todo => {
+	const filteredTodos = Array.isArray(todos) ? todos.filter(todo => {
 		// Apply search filter
 		if (searchText && !todo.text.toLowerCase().includes(searchText.toLowerCase())) {
 			return false;
@@ -226,7 +224,7 @@ const App: React.FC = () => {
 		if (filter === 'active') return !todo.completed;
 		if (filter === 'completed') return todo.completed;
 		return true;
-	});
+	}) : [];
 
 	const handleKeyDown = (e: React.KeyboardEvent) => {
 		if (e.key === 'Enter') {
@@ -295,19 +293,19 @@ const App: React.FC = () => {
 							onClick={() => setFilter('all')}
 							className={`px-4 py-2 rounded-lg ${filter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
 						>
-							All ({todos.length})
+							All ({Array.isArray(todos) ? todos.length : 0})
 						</button>
 						<button
 							onClick={() => setFilter('active')}
 							className={`px-4 py-2 rounded-lg ${filter === 'active' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
 						>
-							Active ({todos.filter(t => !t.completed).length})
+							Active ({Array.isArray(todos) ? todos.filter(t => !t.completed).length : 0})
 						</button>
 						<button
 							onClick={() => setFilter('completed')}
 							className={`px-4 py-2 rounded-lg ${filter === 'completed' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
 						>
-							Completed ({todos.filter(t => t.completed).length})
+							Completed ({Array.isArray(todos) ? todos.filter(t => t.completed).length : 0})
 						</button>
 					</div>
 				</div>

@@ -14,7 +14,7 @@ WORKDIR /app/backend
 COPY backend/package.json  ./
 RUN npm install --production
 COPY backend ./
-COPY --from=frontend-build /app/vitereact/public /app/backend/public
+COPY --from=frontend-build /app/vitereact/dist /app/backend/dist
 EXPOSE 3000
 ENV PORT=3000
 ENV HOST=0.0.0.0
