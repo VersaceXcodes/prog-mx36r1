@@ -20,6 +20,7 @@ const App: React.FC = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [searchText, setSearchText] = useState("");
+	const [deletingIds, setDeletingIds] = useState<Set<number>>(new Set());
 
 	useEffect(() => {
 		// Test server connectivity first
@@ -162,9 +163,18 @@ const App: React.FC = () => {
 	};
 
 	const deleteTodo = async (id: number, retryCount = 0) => {
+		// Prevent multiple delete attempts for the same todo
+		if (deletingIds.has(id)) {
+			console.log(`Delete already in progress for todo ${id}`);
+			return;
+		}
+
 		try {
+			// Add immediate visual feedback
+			setDeletingIds(prev => new Set(prev).add(id));
 			setError(null);
 			console.log(`Deleting todo ${id}`);
+			
 			const response = await axios.delete(`${API_BASE_URL}/api/todos/${id}`, {
 				timeout: 15000,
 				headers: {
@@ -185,6 +195,7 @@ const App: React.FC = () => {
 			
 			console.log(`Deleted todo ${id}`);
 			setTodos(todos.filter(todo => todo.id !== id));
+			
 		} catch (err: any) {
 			if ((err.code === 'ECONNABORTED' || err.response?.status === 502) && retryCount < 3) {
 				console.log(`Error deleting todo, retrying... (attempt ${retryCount + 1})`);
@@ -195,6 +206,13 @@ const App: React.FC = () => {
 			const errorMessage = err.response?.data?.error || err.message || 'Failed to delete todo';
 			setError(`Failed to delete todo: ${errorMessage}`);
 			console.error('Error deleting todo:', err);
+		} finally {
+			// Remove from deleting set regardless of success/failure
+			setDeletingIds(prev => {
+				const newSet = new Set(prev);
+				newSet.delete(id);
+				return newSet;
+			});
 		}
 	};
 
@@ -327,13 +345,24 @@ const App: React.FC = () => {
 									>
 										{todo.text}
 									</span>
-									<button
-										onClick={() => deleteTodo(todo.id)}
-										className="px-3 py-1 text-red-600 hover:bg-red-100 rounded"
-									>
-										Delete
-									</button>
-								</div>
+							<button
+								onClick={() => deleteTodo(todo.id)}
+								disabled={deletingIds.has(todo.id)}
+								className={`px-3 py-1 rounded transition-colors ${
+									deletingIds.has(todo.id)
+										? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+										: 'text-red-600 hover:bg-red-100'
+								}`}
+							>
+								{deletingIds.has(todo.id) ? (
+									<span className="flex items-center gap-1">
+										<div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+										Deleting...
+									</span>
+								) : (
+									'Delete'
+								)}
+							</button>								</div>
 							))
 						)}
 					</div>

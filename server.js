@@ -11,16 +11,41 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Initialize SQLite database with error handling
-const db = new sqlite3.Database(path.join(__dirname, 'todos.db'), (err) => {
+// Initialize SQLite database with enhanced error handling and connection management
+const dbPath = path.join(__dirname, 'todos.db');
+console.log('Database path:', dbPath);
+
+const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
   if (err) {
     console.error('Error opening database:', err.message);
+    console.error('Database path attempted:', dbPath);
     process.exit(1);
   }
-  console.log('Connected to SQLite database');
+  console.log('Connected to SQLite database at:', dbPath);
 });
 
-// Initialize database schema
+// Handle database connection errors
+db.on('error', (err) => {
+  console.error('Database error:', err);
+});
+
+// Ensure database connection is healthy
+db.configure('busyTimeout', 30000); // 30 second timeout for busy database
+
+// Database health check function
+function checkDatabaseHealth() {
+  return new Promise((resolve, reject) => {
+    db.get("SELECT 1 as test", (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row);
+      }
+    });
+  });
+}
+
+// Initialize database schema with better error handling
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS todos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,14 +53,30 @@ db.serialize(() => {
     completed BOOLEAN DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`);
-  
-  // Insert sample data if table is empty
-  db.get("SELECT COUNT(*) as count FROM todos", (err, row) => {
-    if (!err && row.count === 0) {
-      db.run("INSERT INTO todos (text, completed) VALUES (?, ?)", ['Sample todo item', 0]);
-      db.run("INSERT INTO todos (text, completed) VALUES (?, ?)", ['Completed sample', 1]);
+  )`, (err) => {
+    if (err) {
+      console.error('Error creating todos table:', err);
+      return;
     }
+    console.log('Todos table ready');
+    
+    // Insert sample data if table is empty
+    db.get("SELECT COUNT(*) as count FROM todos", (err, row) => {
+      if (err) {
+        console.error('Error checking todo count:', err);
+        return;
+      }
+      
+      if (row && row.count === 0) {
+        console.log('Inserting sample data...');
+        db.run("INSERT INTO todos (text, completed) VALUES (?, ?)", ['Sample todo item', 0], (err) => {
+          if (err) console.error('Error inserting sample todo 1:', err);
+        });
+        db.run("INSERT INTO todos (text, completed) VALUES (?, ?)", ['Completed sample', 1], (err) => {
+          if (err) console.error('Error inserting sample todo 2:', err);
+        });
+      }
+    });
   });
 });
 
@@ -43,11 +84,16 @@ const app = express();
 
 const port = process.env.PORT || 3000;
 
-// Enhanced CORS configuration with additional headers
+// Enhanced CORS configuration with comprehensive origin handling
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    console.log('CORS check for origin:', origin || 'no-origin');
+    
+    // Allow requests with no origin (like mobile apps, curl requests, or same-origin)
+    if (!origin) {
+      console.log('CORS: Allowing request with no origin');
+      return callback(null, true);
+    }
     
     const allowedOrigins = [
       'https://sandy-ecuador-compensation-amplifier.trycloudflare.com',
@@ -59,16 +105,29 @@ app.use(cors({
       'https://123testing-project-yes-api.launchpulse.ai'
     ];
     
-    // Check if origin is in allowed list or matches launchpulse.ai pattern
-    if (allowedOrigins.includes(origin) || /^https:\/\/.*\.launchpulse\.ai$/.test(origin)) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked origin:', origin);
-      callback(new Error('Not allowed by CORS'));
+    // Check if origin is in allowed list
+    if (allowedOrigins.includes(origin)) {
+      console.log('CORS: Allowing origin from allowed list:', origin);
+      return callback(null, true);
     }
+    
+    // Check if origin matches launchpulse.ai pattern
+    if (/^https:\/\/.*\.launchpulse\.ai$/.test(origin)) {
+      console.log('CORS: Allowing launchpulse.ai subdomain:', origin);
+      return callback(null, true);
+    }
+    
+    // Allow localhost with any port for development
+    if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      console.log('CORS: Allowing localhost origin:', origin);
+      return callback(null, true);
+    }
+    
+    console.log('CORS: Blocking origin:', origin);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH'],
   allowedHeaders: [
     'Content-Type', 
     'Authorization', 
@@ -76,11 +135,15 @@ app.use(cors({
     'Accept',
     'Origin',
     'Cache-Control',
-    'X-File-Name'
+    'X-File-Name',
+    'Access-Control-Allow-Origin',
+    'Access-Control-Allow-Headers',
+    'Access-Control-Allow-Methods'
   ],
-  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+  exposedHeaders: ['Content-Length', 'X-Total-Count', 'X-Request-ID'],
   optionsSuccessStatus: 200,
-  preflightContinue: false
+  preflightContinue: false,
+  maxAge: 86400 // 24 hours
 }));
 
 // Request logging middleware
@@ -92,20 +155,28 @@ app.use((req, _res, next) => {
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// Add request timeout handling
+// Add request timeout handling with better error handling
 app.use((_req, res, next) => {
   const timeout = setTimeout(() => {
     if (!res.headersSent) {
-      console.log('Request timeout');
-      res.status(408).json({ 
-        error: 'Request timeout',
-        timestamp: new Date().toISOString(),
-        status: 'timeout'
-      });
+      console.log('Request timeout - sending 408 response');
+      try {
+        res.status(408).json({ 
+          error: 'Request timeout',
+          timestamp: new Date().toISOString(),
+          status: 'timeout'
+        });
+      } catch (err) {
+        console.error('Error sending timeout response:', err);
+      }
     }
   }, 30000);
   
   res.on('finish', () => {
+    clearTimeout(timeout);
+  });
+  
+  res.on('close', () => {
     clearTimeout(timeout);
   });
   
@@ -124,6 +195,23 @@ app.use((req, res, next) => {
   // Only set JSON content type for API routes
   if (req.path.startsWith('/api/')) {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
+    // Override res.json to ensure valid JSON responses
+    const originalJson = res.json;
+    res.json = function(obj) {
+      try {
+        // Validate that the object can be serialized to JSON
+        JSON.stringify(obj);
+        return originalJson.call(this, obj);
+      } catch (error) {
+        console.error('Invalid JSON response object:', error);
+        return originalJson.call(this, {
+          error: 'Internal server error - invalid response format',
+          timestamp: new Date().toISOString(),
+          status: 'json_error'
+        });
+      }
+    };
   }
   next();
 });
@@ -166,41 +254,54 @@ app.get("/health", (_req, res) => {
   });
 });
 
-app.get("/api/health", (_req, res) => {
+app.get("/api/health", async (_req, res) => {
   res.setHeader('Content-Type', 'application/json');
   
-  // Test database connection
-  db.get("SELECT 1 as test", (err) => {
-    if (err) {
-      console.error('Database health check failed:', err);
-      return res.status(503).json({ 
-        status: "unhealthy", 
-        timestamp: new Date().toISOString(),
-        database: "disconnected",
-        error: err.message
-      });
-    }
+  try {
+    // Test database connection using the health check function
+    await checkDatabaseHealth();
     
     res.json({ 
       status: "healthy", 
       timestamp: new Date().toISOString(),
       database: "connected",
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      version: "1.0.0"
+    });
+  } catch (err) {
+    console.error('Database health check failed:', err);
+    res.status(503).json({ 
+      status: "unhealthy", 
+      timestamp: new Date().toISOString(),
+      database: "disconnected",
+      error: err.message,
       uptime: process.uptime()
     });
-  });
+  }
 });
 
-// Handle preflight OPTIONS requests explicitly
-app.options('/api/*', (_req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
+// Handle preflight OPTIONS requests explicitly with comprehensive headers
+app.options('/api/*', (req, res) => {
+  console.log('OPTIONS request for:', req.path, 'from origin:', req.get('Origin'));
+  
+  const origin = req.get('Origin');
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Max-Age', '86400');
-  res.status(200).end();
+  res.setHeader('Content-Length', '0');
+  res.status(204).end();
 });
 
-// Todo API endpoints with enhanced error handling
-app.get("/api/todos", (_req, res) => {
+// Todo API endpoints with enhanced error handling and database health checks
+app.get("/api/todos", async (_req, res) => {
   console.log('GET /api/todos - Fetching todos');
   
   // Set response headers explicitly
@@ -208,6 +309,9 @@ app.get("/api/todos", (_req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   
   try {
+    // Check database health before proceeding
+    await checkDatabaseHealth();
+    
     db.all('SELECT * FROM todos ORDER BY created_at DESC', (err, rows) => {
       if (err) {
         console.error('Error fetching todos:', err);
@@ -215,7 +319,8 @@ app.get("/api/todos", (_req, res) => {
           return res.status(500).json({ 
             error: 'Failed to fetch todos', 
             details: err.message,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            status: 'database_error'
           });
         }
         return;
@@ -226,17 +331,19 @@ app.get("/api/todos", (_req, res) => {
       }
     });
   } catch (error) {
-    console.error('Unexpected error in GET /api/todos:', error);
+    console.error('Database health check failed in GET /api/todos:', error);
     if (!res.headersSent) {
-      res.status(500).json({ 
-        error: 'Internal server error', 
-        timestamp: new Date().toISOString()
+      res.status(503).json({ 
+        error: 'Database unavailable', 
+        details: error.message,
+        timestamp: new Date().toISOString(),
+        status: 'service_unavailable'
       });
     }
   }
 });
 
-app.post("/api/todos", (req, res) => {
+app.post("/api/todos", async (req, res) => {
   console.log('POST /api/todos - Creating todo:', req.body);
   
   // Set response headers explicitly
@@ -247,9 +354,13 @@ app.post("/api/todos", (req, res) => {
     if (!text || typeof text !== 'string' || !text.trim()) {
       return res.status(400).json({ 
         error: 'Text is required and must be a non-empty string',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        status: 'invalid_request'
       });
     }
+    
+    // Check database health before proceeding
+    await checkDatabaseHealth();
     
     db.run('INSERT INTO todos (text) VALUES (?)', [text.trim()], function(err) {
       if (err) {
@@ -258,7 +369,8 @@ app.post("/api/todos", (req, res) => {
           return res.status(500).json({ 
             error: 'Failed to create todo', 
             details: err.message,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            status: 'database_error'
           });
         }
         return;
@@ -271,23 +383,30 @@ app.post("/api/todos", (req, res) => {
             return res.status(500).json({ 
               error: 'Failed to fetch created todo', 
               details: err.message,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
+              status: 'database_error'
             });
           }
           return;
         }
         console.log('Created todo:', row);
         if (!res.headersSent) {
-          res.status(201).json(row);
+          res.status(201).json({
+            ...row,
+            status: 'success',
+            timestamp: new Date().toISOString()
+          });
         }
       });
     });
   } catch (error) {
-    console.error('Unexpected error in POST /api/todos:', error);
+    console.error('Database health check failed in POST /api/todos:', error);
     if (!res.headersSent) {
-      res.status(500).json({ 
-        error: 'Internal server error',
-        timestamp: new Date().toISOString()
+      res.status(503).json({ 
+        error: 'Database unavailable',
+        details: error.message,
+        timestamp: new Date().toISOString(),
+        status: 'service_unavailable'
       });
     }
   }
@@ -384,7 +503,7 @@ app.put("/api/todos/:id", (req, res) => {
   }
 });
 
-app.delete("/api/todos/:id", (req, res) => {
+app.delete("/api/todos/:id", async (req, res) => {
   console.log(`DELETE /api/todos/${req.params.id} - Deleting todo`);
   
   // Set response headers explicitly
@@ -396,9 +515,13 @@ app.delete("/api/todos/:id", (req, res) => {
     if (!id || isNaN(parseInt(id))) {
       return res.status(400).json({ 
         error: 'Valid todo ID is required',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        status: 'invalid_request'
       });
     }
+    
+    // Check database health before proceeding
+    await checkDatabaseHealth();
     
     db.run('DELETE FROM todos WHERE id = ?', [parseInt(id)], function(err) {
       if (err) {
@@ -407,7 +530,8 @@ app.delete("/api/todos/:id", (req, res) => {
           return res.status(500).json({ 
             error: 'Failed to delete todo', 
             details: err.message,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            status: 'database_error'
           });
         }
         return;
@@ -417,27 +541,32 @@ app.delete("/api/todos/:id", (req, res) => {
         if (!res.headersSent) {
           return res.status(404).json({ 
             error: 'Todo not found',
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            status: 'not_found'
           });
         }
         return;
       }
       
-      console.log(`Deleted todo with id: ${id}`);
+      console.log(`Successfully deleted todo with id: ${id}, changes: ${this.changes}`);
       if (!res.headersSent) {
         res.json({ 
           message: 'Todo deleted successfully', 
           id: parseInt(id),
-          timestamp: new Date().toISOString()
+          changes: this.changes,
+          timestamp: new Date().toISOString(),
+          status: 'success'
         });
       }
     });
   } catch (error) {
-    console.error('Unexpected error in DELETE /api/todos/:id:', error);
+    console.error('Database health check failed in DELETE /api/todos/:id:', error);
     if (!res.headersSent) {
-      res.status(500).json({ 
-        error: 'Internal server error',
-        timestamp: new Date().toISOString()
+      res.status(503).json({ 
+        error: 'Database unavailable',
+        details: error.message,
+        timestamp: new Date().toISOString(),
+        status: 'service_unavailable'
       });
     }
   }
