@@ -9,9 +9,7 @@ interface Todo {
 	updated_at: string;
 }
 
-const API_BASE_URL = import.meta.env.PROD 
-	? 'https://123testing-project-yes.launchpulse.ai/api' 
-	: 'http://localhost:3000/api';
+const API_BASE_URL = 'https://123testing-project-yes-api.launchpulse.ai';
 
 const App: FC = () => {
 	const [todos, setTodos] = useState<Todo[]>([]);
