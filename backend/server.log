@@ -1,0 +1,388 @@
+[dotenv@17.2.1] injecting env (0) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+Database path: /app/backend/todos.db
+Server running on port 3000 and listening on 0.0.0.0
+Available at: http://localhost:3000
+Connected to SQLite database at: /app/backend/todos.db
+Todos table ready
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:09.467Z - GET /api/todos - Origin: none
+GET /api/todos - Fetching todos
+Found 3 todos
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:09.484Z - POST /api/todos - Origin: none
+POST /api/todos - Creating todo: { text: 'Test todo with important label', label: 'important' }
+Created todo: {
+  id: 4,
+  text: 'Test todo with important label',
+  completed: 0,
+  label: 'important',
+  created_at: '2025-07-29 15:20:09',
+  updated_at: '2025-07-29 15:20:09'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:09.500Z - PUT /api/todos/1 - Origin: none
+PUT /api/todos/1 - Updating todo: { label: 'urgent' }
+Updated todo: {
+  id: 1,
+  text: 'Sample todo item',
+  completed: 0,
+  label: 'urgent',
+  created_at: '2025-07-29 15:17:26',
+  updated_at: '2025-07-29 15:20:09'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:09.506Z - GET /api/todos - Origin: none
+GET /api/todos - Fetching todos
+Found 4 todos
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.868Z - GET /api/health - Origin: none
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.891Z - POST /api/todos - Origin: none
+POST /api/todos - Creating todo: { text: 'Test normal priority todo', label: 'normal' }
+Created todo: {
+  id: 5,
+  text: 'Test normal priority todo',
+  completed: 0,
+  label: 'normal',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:20:43'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.899Z - PUT /api/todos/5 - Origin: none
+PUT /api/todos/5 - Updating todo: { label: 'important' }
+Updated todo: {
+  id: 5,
+  text: 'Test normal priority todo',
+  completed: 0,
+  label: 'important',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:20:43'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.906Z - GET /api/todos - Origin: none
+GET /api/todos - Fetching todos
+Found 5 todos
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.914Z - POST /api/todos - Origin: none
+POST /api/todos - Creating todo: { text: 'Test normal priority', label: 'normal' }
+Created todo: {
+  id: 6,
+  text: 'Test normal priority',
+  completed: 0,
+  label: 'normal',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:20:43'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.926Z - POST /api/todos - Origin: none
+POST /api/todos - Creating todo: { text: 'Test important priority', label: 'important' }
+Created todo: {
+  id: 7,
+  text: 'Test important priority',
+  completed: 0,
+  label: 'important',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:20:43'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.933Z - POST /api/todos - Origin: none
+POST /api/todos - Creating todo: { text: 'Test urgent priority', label: 'urgent' }
+Created todo: {
+  id: 8,
+  text: 'Test urgent priority',
+  completed: 0,
+  label: 'urgent',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:20:43'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.939Z - POST /api/todos - Origin: none
+POST /api/todos - Creating todo: { text: 'Test low priority', label: 'low' }
+Created todo: {
+  id: 9,
+  text: 'Test low priority',
+  completed: 0,
+  label: 'low',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:20:43'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.948Z - GET /api/todos - Origin: none
+GET /api/todos - Fetching todos
+Found 9 todos
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.956Z - PUT /api/todos/5 - Origin: none
+PUT /api/todos/5 - Updating todo: { label: 'important' }
+Updated todo: {
+  id: 5,
+  text: 'Test normal priority todo',
+  completed: 0,
+  label: 'important',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:20:43'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.961Z - PUT /api/todos/6 - Origin: none
+PUT /api/todos/6 - Updating todo: { label: 'urgent' }
+Updated todo: {
+  id: 6,
+  text: 'Test normal priority',
+  completed: 0,
+  label: 'urgent',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:20:43'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.967Z - PUT /api/todos/7 - Origin: none
+PUT /api/todos/7 - Updating todo: { label: 'low' }
+Updated todo: {
+  id: 7,
+  text: 'Test important priority',
+  completed: 0,
+  label: 'low',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:20:43'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:20:43.973Z - PUT /api/todos/8 - Origin: none
+PUT /api/todos/8 - Updating todo: { label: 'normal' }
+Updated todo: {
+  id: 8,
+  text: 'Test urgent priority',
+  completed: 0,
+  label: 'normal',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:20:43'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:21:41.282Z - GET / - Origin: none
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:21:41.642Z - GET /assets/index-Dh5teBAD.css - Origin: https://123testing-project-yes-api.launchpulse.ai
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:21:41.654Z - GET /assets/vendor-e2CnU-vp.js - Origin: https://123testing-project-yes-api.launchpulse.ai
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:21:41.679Z - GET /assets/index-bR7xdrxA.js - Origin: https://123testing-project-yes-api.launchpulse.ai
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:21:41.986Z - GET /assets/vendor-e2CnU-vp.js.map - Origin: none
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:21:41.988Z - GET /assets/index-bR7xdrxA.js.map - Origin: none
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:21:41.995Z - GET /api/health - Origin: none
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:21:42.479Z - GET /api/todos - Origin: none
+GET /api/todos - Fetching todos
+Found 9 todos
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:21:42.698Z - GET /favicon.png - Origin: none
+ReferenceError: require is not defined
+    at file:///app/backend/server.js:615:3
+    at Layer.handle [as handle_request] (/app/node_modules/express/lib/router/layer.js:95:5)
+    at next (/app/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/app/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/app/node_modules/express/lib/router/layer.js:95:5)
+    at /app/node_modules/express/lib/router/index.js:284:15
+    at param (/app/node_modules/express/lib/router/index.js:365:14)
+    at param (/app/node_modules/express/lib/router/index.js:376:14)
+    at Function.process_params (/app/node_modules/express/lib/router/index.js:421:3)
+    at next (/app/node_modules/express/lib/router/index.js:280:10)
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:21:42.720Z - GET / - Origin: none
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:21:47.557Z - POST /api/todos - Origin: https://123testing-project-yes-api.launchpulse.ai
+POST /api/todos - Creating todo: { text: 'sd' }
+Created todo: {
+  id: 10,
+  text: 'sd',
+  completed: 0,
+  label: 'normal',
+  created_at: '2025-07-29 15:21:47',
+  updated_at: '2025-07-29 15:21:47'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:22:00.102Z - GET / - Origin: none
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:22:00.637Z - GET /api/health - Origin: none
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T15:22:00.962Z - GET /api/todos - Origin: none
+GET /api/todos - Fetching todos
+Found 10 todos
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:06.120Z - POST /api/todos - Origin: https://123testing-project-yes-api.launchpulse.ai
+POST /api/todos - Creating todo: { text: 'sdsdd' }
+Created todo: {
+  id: 11,
+  text: 'sdsdd',
+  completed: 0,
+  label: 'normal',
+  created_at: '2025-07-29 15:22:06',
+  updated_at: '2025-07-29 15:22:06'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:07.649Z - PUT /api/todos/5 - Origin: https://123testing-project-yes-api.launchpulse.ai
+PUT /api/todos/5 - Updating todo: { completed: true }
+Updated todo: {
+  id: 5,
+  text: 'Test normal priority todo',
+  completed: 1,
+  label: 'important',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:22:07'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:09.842Z - PUT /api/todos/10 - Origin: https://123testing-project-yes-api.launchpulse.ai
+PUT /api/todos/10 - Updating todo: { completed: true }
+Updated todo: {
+  id: 10,
+  text: 'sd',
+  completed: 1,
+  label: 'normal',
+  created_at: '2025-07-29 15:21:47',
+  updated_at: '2025-07-29 15:22:09'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:10.707Z - PUT /api/todos/6 - Origin: https://123testing-project-yes-api.launchpulse.ai
+PUT /api/todos/6 - Updating todo: { completed: true }
+Updated todo: {
+  id: 6,
+  text: 'Test normal priority',
+  completed: 1,
+  label: 'urgent',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:22:10'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:11.394Z - PUT /api/todos/7 - Origin: https://123testing-project-yes-api.launchpulse.ai
+PUT /api/todos/7 - Updating todo: { completed: true }
+Updated todo: {
+  id: 7,
+  text: 'Test important priority',
+  completed: 1,
+  label: 'low',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:22:11'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:11.943Z - PUT /api/todos/8 - Origin: https://123testing-project-yes-api.launchpulse.ai
+PUT /api/todos/8 - Updating todo: { completed: true }
+Updated todo: {
+  id: 8,
+  text: 'Test urgent priority',
+  completed: 1,
+  label: 'normal',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:22:11'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:12.195Z - PUT /api/todos/9 - Origin: https://123testing-project-yes-api.launchpulse.ai
+PUT /api/todos/9 - Updating todo: { completed: true }
+Updated todo: {
+  id: 9,
+  text: 'Test low priority',
+  completed: 1,
+  label: 'low',
+  created_at: '2025-07-29 15:20:43',
+  updated_at: '2025-07-29 15:22:12'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:12.428Z - PUT /api/todos/4 - Origin: https://123testing-project-yes-api.launchpulse.ai
+PUT /api/todos/4 - Updating todo: { completed: true }
+Updated todo: {
+  id: 4,
+  text: 'Test todo with important label',
+  completed: 1,
+  label: 'important',
+  created_at: '2025-07-29 15:20:09',
+  updated_at: '2025-07-29 15:22:12'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:12.891Z - PUT /api/todos/1 - Origin: https://123testing-project-yes-api.launchpulse.ai
+PUT /api/todos/1 - Updating todo: { completed: true }
+Updated todo: {
+  id: 1,
+  text: 'Sample todo item',
+  completed: 1,
+  label: 'urgent',
+  created_at: '2025-07-29 15:17:26',
+  updated_at: '2025-07-29 15:22:12'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:13.726Z - PUT /api/todos/11 - Origin: https://123testing-project-yes-api.launchpulse.ai
+PUT /api/todos/11 - Updating todo: { completed: true }
+Updated todo: {
+  id: 11,
+  text: 'sdsdd',
+  completed: 1,
+  label: 'normal',
+  created_at: '2025-07-29 15:22:06',
+  updated_at: '2025-07-29 15:22:13'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:18.542Z - PUT /api/todos/2 - Origin: https://123testing-project-yes-api.launchpulse.ai
+PUT /api/todos/2 - Updating todo: { completed: true }
+Updated todo: {
+  id: 2,
+  text: 'Important task',
+  completed: 1,
+  label: 'important',
+  created_at: '2025-07-29 15:17:26',
+  updated_at: '2025-07-29 15:22:18'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:22.307Z - PUT /api/todos/11 - Origin: https://123testing-project-yes-api.launchpulse.ai
+PUT /api/todos/11 - Updating todo: { completed: false }
+Updated todo: {
+  id: 11,
+  text: 'sdsdd',
+  completed: 0,
+  label: 'normal',
+  created_at: '2025-07-29 15:22:06',
+  updated_at: '2025-07-29 15:22:22'
+}
+CORS check for origin: https://123testing-project-yes-api.launchpulse.ai
+CORS: Allowing origin from allowed list: https://123testing-project-yes-api.launchpulse.ai
+2025-07-29T15:22:24.828Z - DELETE /api/todos/10 - Origin: https://123testing-project-yes-api.launchpulse.ai
+DELETE /api/todos/10 - Deleting todo
+Successfully deleted todo with id: 10, changes: 1

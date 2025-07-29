@@ -51,6 +51,7 @@ db.serialize(() => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     text TEXT NOT NULL,
     completed BOOLEAN DEFAULT 0,
+    label TEXT DEFAULT 'normal',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`, (err) => {
@@ -350,7 +351,7 @@ app.post("/api/todos", async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   
   try {
-    const { text } = req.body;
+    const { text, label } = req.body;
     if (!text || typeof text !== 'string' || !text.trim()) {
       return res.status(400).json({ 
         error: 'Text is required and must be a non-empty string',
@@ -362,7 +363,8 @@ app.post("/api/todos", async (req, res) => {
     // Check database health before proceeding
     await checkDatabaseHealth();
     
-    db.run('INSERT INTO todos (text) VALUES (?)', [text.trim()], function(err) {
+    const todoLabel = label || 'normal';
+    db.run('INSERT INTO todos (text, label) VALUES (?, ?)', [text.trim(), todoLabel], function(err) {
       if (err) {
         console.error('Error creating todo:', err);
         if (!res.headersSent) {
@@ -420,7 +422,7 @@ app.put("/api/todos/:id", (req, res) => {
   
   try {
     const { id } = req.params;
-    const { text, completed } = req.body;
+    const { text, completed, label } = req.body;
     
     if (!id || isNaN(parseInt(id))) {
       return res.status(400).json({ 
@@ -446,6 +448,11 @@ app.put("/api/todos/:id", (req, res) => {
     if (completed !== undefined) {
       query += ', completed = ?';
       params.push(completed ? 1 : 0);
+    }
+    
+    if (label !== undefined) {
+      query += ', label = ?';
+      params.push(label);
     }
     
     query += ' WHERE id = ?';
