@@ -1,0 +1,45 @@
+[dotenv@17.2.1] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+Database path: /app/todos.db
+Server running on port 3000 and listening on 0.0.0.0
+Available at: http://localhost:3000
+Connected to SQLite database at: /app/todos.db
+Todos table ready
+Adding label column to existing todos table...
+Label column added successfully
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T11:53:37.829Z - GET /api/health - Origin: none
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T11:53:37.851Z - GET /api/todos - Origin: none
+GET /api/todos - Fetching todos
+Found 2 todos
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T11:53:37.859Z - POST /api/todos - Origin: none
+POST /api/todos - Creating todo: { text: 'Test important task', label: 'important' }
+Created todo: {
+  id: 4,
+  text: 'Test important task',
+  completed: 0,
+  created_at: '2025-07-29 11:53:37',
+  updated_at: '2025-07-29 11:53:37',
+  label: 'important'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T11:53:37.909Z - PUT /api/todos/4 - Origin: none
+PUT /api/todos/4 - Updating todo: { label: 'urgent' }
+Updated todo: {
+  id: 4,
+  text: 'Test important task',
+  completed: 0,
+  created_at: '2025-07-29 11:53:37',
+  updated_at: '2025-07-29 11:53:37',
+  label: 'urgent'
+}
+CORS check for origin: no-origin
+CORS: Allowing request with no origin
+2025-07-29T11:53:37.917Z - GET /api/todos - Origin: none
+GET /api/todos - Fetching todos
+Found 3 todos

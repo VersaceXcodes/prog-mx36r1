@@ -51,6 +51,7 @@ db.serialize(() => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     text TEXT NOT NULL,
     completed BOOLEAN DEFAULT 0,
+    label TEXT DEFAULT 'normal',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`, (err) => {
@@ -59,6 +60,26 @@ db.serialize(() => {
       return;
     }
     console.log('Todos table ready');
+    
+    // Check if label column exists and add it if it doesn't (for existing databases)
+    db.all("PRAGMA table_info(todos)", (err, columns) => {
+      if (err) {
+        console.error('Error checking table structure:', err);
+        return;
+      }
+      
+      const hasLabelColumn = columns.some(col => col.name === 'label');
+      if (!hasLabelColumn) {
+        console.log('Adding label column to existing todos table...');
+        db.run("ALTER TABLE todos ADD COLUMN label TEXT DEFAULT 'normal'", (err) => {
+          if (err) {
+            console.error('Error adding label column:', err);
+          } else {
+            console.log('Label column added successfully');
+          }
+        });
+      }
+    });
     
     // Insert sample data if table is empty
     db.get("SELECT COUNT(*) as count FROM todos", (err, row) => {
@@ -69,11 +90,14 @@ db.serialize(() => {
       
       if (row && row.count === 0) {
         console.log('Inserting sample data...');
-        db.run("INSERT INTO todos (text, completed) VALUES (?, ?)", ['Sample todo item', 0], (err) => {
+        db.run("INSERT INTO todos (text, completed, label) VALUES (?, ?, ?)", ['Sample todo item', 0, 'normal'], (err) => {
           if (err) console.error('Error inserting sample todo 1:', err);
         });
-        db.run("INSERT INTO todos (text, completed) VALUES (?, ?)", ['Completed sample', 1], (err) => {
+        db.run("INSERT INTO todos (text, completed, label) VALUES (?, ?, ?)", ['Important task', 0, 'important'], (err) => {
           if (err) console.error('Error inserting sample todo 2:', err);
+        });
+        db.run("INSERT INTO todos (text, completed, label) VALUES (?, ?, ?)", ['Completed sample', 1, 'normal'], (err) => {
+          if (err) console.error('Error inserting sample todo 3:', err);
         });
       }
     });
@@ -350,7 +374,7 @@ app.post("/api/todos", async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   
   try {
-    const { text } = req.body;
+    const { text, label } = req.body;
     if (!text || typeof text !== 'string' || !text.trim()) {
       return res.status(400).json({ 
         error: 'Text is required and must be a non-empty string',
@@ -359,10 +383,14 @@ app.post("/api/todos", async (req, res) => {
       });
     }
     
+    // Validate label if provided
+    const validLabels = ['normal', 'important', 'urgent', 'low'];
+    const todoLabel = label && validLabels.includes(label) ? label : 'normal';
+    
     // Check database health before proceeding
     await checkDatabaseHealth();
     
-    db.run('INSERT INTO todos (text) VALUES (?)', [text.trim()], function(err) {
+    db.run('INSERT INTO todos (text, label) VALUES (?, ?)', [text.trim(), todoLabel], function(err) {
       if (err) {
         console.error('Error creating todo:', err);
         if (!res.headersSent) {
@@ -420,7 +448,7 @@ app.put("/api/todos/:id", (req, res) => {
   
   try {
     const { id } = req.params;
-    const { text, completed } = req.body;
+    const { text, completed, label } = req.body;
     
     if (!id || isNaN(parseInt(id))) {
       return res.status(400).json({ 
@@ -446,6 +474,18 @@ app.put("/api/todos/:id", (req, res) => {
     if (completed !== undefined) {
       query += ', completed = ?';
       params.push(completed ? 1 : 0);
+    }
+    
+    if (label !== undefined) {
+      const validLabels = ['normal', 'important', 'urgent', 'low'];
+      if (!validLabels.includes(label)) {
+        return res.status(400).json({ 
+          error: 'Label must be one of: normal, important, urgent, low',
+          timestamp: new Date().toISOString()
+        });
+      }
+      query += ', label = ?';
+      params.push(label);
     }
     
     query += ' WHERE id = ?';

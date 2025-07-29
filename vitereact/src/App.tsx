@@ -5,6 +5,7 @@ interface Todo {
 	id: number;
 	text: string;
 	completed: boolean;
+	label: string;
 	created_at: string;
 	updated_at: string;
 }
@@ -18,6 +19,7 @@ const API_BASE_URL = 'https://123testing-project-yes-api.launchpulse.ai';
 const App: React.FC = () => {
 	const [todos, setTodos] = useState<Todo[]>([]);
 	const [newTodoText, setNewTodoText] = useState("");
+	const [newTodoLabel, setNewTodoLabel] = useState("normal");
 	const [filter, setFilter] = useState<FilterType>('all');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -63,15 +65,16 @@ const App: React.FC = () => {
 			
 			console.log('Fetched todos:', response.data);
 			setTodos(Array.isArray(response.data) ? response.data : []);
-	} catch (err: any) {
-		if (err.code === 'ECONNABORTED' && retryCount < 3) {				console.log(`Timeout error, retrying... (attempt ${retryCount + 1})`);
+	} catch (err: unknown) {
+		const error = err as { code?: string; response?: { data?: { error?: string } }; message?: string };
+		if (error.code === 'ECONNABORTED' && retryCount < 3) {			console.log(`Timeout error, retrying... (attempt ${retryCount + 1})`);
 				setTimeout(() => fetchTodos(retryCount + 1), 2000 * (retryCount + 1));
 				return;
 			}
 			
-			const errorMessage = err.response?.data?.error || err.message || 'Failed to fetch todos';
+			const errorMessage = error.response?.data?.error || error.message || 'Failed to fetch todos';
 			setError(`Failed to fetch todos: ${errorMessage}`);
-			console.error('Error fetching todos:', err);
+			console.error('Error fetching todos:', error);
 			setTodos([]);
 		} finally {
 			setLoading(false);
@@ -83,9 +86,10 @@ const App: React.FC = () => {
 		
 		try {
 			setError(null);
-			console.log('Adding todo:', newTodoText.trim());
+			console.log('Adding todo:', newTodoText.trim(), 'with label:', newTodoLabel);
 			const response = await axios.post(`${API_BASE_URL}/api/todos`, {
-				text: newTodoText.trim()
+				text: newTodoText.trim(),
+				label: newTodoLabel
 			}, {
 				timeout: 15000,
 				headers: {
@@ -107,21 +111,62 @@ const App: React.FC = () => {
 			
 		console.log('Added todo:', response.data);
 		setTodos(prevTodos => [response.data, ...(Array.isArray(prevTodos) ? prevTodos : [])]);
-		setNewTodoText("");		} catch (err: any) {
-			if ((err.code === 'ECONNABORTED' || err.response?.status === 502) && retryCount < 3) {
+		setNewTodoText("");
+		setNewTodoLabel("normal");		} catch (err: unknown) {
+			const error = err as { code?: string; response?: { status?: number; data?: { error?: string } }; message?: string };
+			if ((error.code === 'ECONNABORTED' || error.response?.status === 502) && retryCount < 3) {
 				console.log(`Error adding todo, retrying... (attempt ${retryCount + 1})`);
 				setTimeout(() => addTodoWithRetry(retryCount + 1), 2000 * (retryCount + 1));
 				return;
 			}
 			
-			const errorMessage = err.response?.data?.error || err.message || 'Failed to add todo';
+			const errorMessage = error.response?.data?.error || error.message || 'Failed to add todo';
 			setError(`Failed to add todo: ${errorMessage}`);
-			console.error('Error adding todo:', err);
+			console.error('Error adding todo:', error);
 		}
 	};
 
 	const addTodo = () => {
 		addTodoWithRetry(0);
+	};
+
+	const updateTodoLabel = async (id: number, label: string, retryCount = 0) => {
+		try {
+			setError(null);
+			console.log(`Updating todo ${id} label to ${label}`);
+			const response = await axios.put(`${API_BASE_URL}/api/todos/${id}`, {
+				label: label
+			}, {
+				timeout: 15000,
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				validateStatus: (status) => status < 500 || status === 502
+			});
+			
+			if (response.status === 502 && retryCount < 3) {
+				console.log(`502 error updating label, retrying... (attempt ${retryCount + 1})`);
+				setTimeout(() => updateTodoLabel(id, label, retryCount + 1), 1000 * (retryCount + 1));
+				return;
+			}
+			
+		console.log('Updated todo label:', response.data);
+		setTodos(prevTodos => Array.isArray(prevTodos) ? prevTodos.map(todo => 
+			todo.id === id ? response.data : todo
+		) : []);
+		} catch (err: unknown) {
+			const error = err as { code?: string; response?: { status?: number; data?: { error?: string } }; message?: string };
+			if ((error.code === 'ECONNABORTED' || error.response?.status === 502) && retryCount < 3) {
+				console.log(`Error updating label, retrying... (attempt ${retryCount + 1})`);
+				setTimeout(() => updateTodoLabel(id, label, retryCount + 1), 2000 * (retryCount + 1));
+				return;
+			}
+			
+			const errorMessage = error.response?.data?.error || error.message || 'Failed to update todo label';
+			setError(`Failed to update todo label: ${errorMessage}`);
+			console.error('Error updating todo label:', error);
+		}
 	};
 
 	const toggleTodo = async (id: number, completed: boolean, retryCount = 0) => {
@@ -148,16 +193,17 @@ const App: React.FC = () => {
 		console.log('Updated todo:', response.data);
 		setTodos(prevTodos => Array.isArray(prevTodos) ? prevTodos.map(todo => 
 			todo.id === id ? response.data : todo
-		) : []);		} catch (err: any) {
-			if ((err.code === 'ECONNABORTED' || err.response?.status === 502) && retryCount < 3) {
+		) : []);		} catch (err: unknown) {
+			const error = err as { code?: string; response?: { status?: number; data?: { error?: string } }; message?: string };
+			if ((error.code === 'ECONNABORTED' || error.response?.status === 502) && retryCount < 3) {
 				console.log(`Error toggling todo, retrying... (attempt ${retryCount + 1})`);
 				setTimeout(() => toggleTodo(id, completed, retryCount + 1), 2000 * (retryCount + 1));
 				return;
 			}
 			
-			const errorMessage = err.response?.data?.error || err.message || 'Failed to update todo';
+			const errorMessage = error.response?.data?.error || error.message || 'Failed to update todo';
 			setError(`Failed to update todo: ${errorMessage}`);
-			console.error('Error updating todo:', err);
+			console.error('Error updating todo:', error);
 		}
 	};
 
@@ -194,16 +240,17 @@ const App: React.FC = () => {
 			
 		console.log(`Deleted todo ${id}`);
 		setTodos(prevTodos => Array.isArray(prevTodos) ? prevTodos.filter(todo => todo.id !== id) : []);			
-		} catch (err: any) {
-			if ((err.code === 'ECONNABORTED' || err.response?.status === 502) && retryCount < 3) {
+		} catch (err: unknown) {
+			const error = err as { code?: string; response?: { status?: number; data?: { error?: string } }; message?: string };
+			if ((error.code === 'ECONNABORTED' || error.response?.status === 502) && retryCount < 3) {
 				console.log(`Error deleting todo, retrying... (attempt ${retryCount + 1})`);
 				setTimeout(() => deleteTodo(id, retryCount + 1), 2000 * (retryCount + 1));
 				return;
 			}
 			
-			const errorMessage = err.response?.data?.error || err.message || 'Failed to delete todo';
+			const errorMessage = error.response?.data?.error || error.message || 'Failed to delete todo';
 			setError(`Failed to delete todo: ${errorMessage}`);
-			console.error('Error deleting todo:', err);
+			console.error('Error deleting todo:', error);
 		} finally {
 			// Remove from deleting set regardless of success/failure
 			setDeletingIds(prev => {
@@ -232,6 +279,24 @@ const App: React.FC = () => {
 		}
 	};
 
+	const getLabelColor = (label: string) => {
+		switch (label) {
+			case 'important': return 'bg-red-500';
+			case 'urgent': return 'bg-orange-500';
+			case 'low': return 'bg-blue-500';
+			default: return 'bg-gray-400';
+		}
+	};
+
+	const getLabelText = (label: string) => {
+		switch (label) {
+			case 'important': return 'Important';
+			case 'urgent': return 'Urgent';
+			case 'low': return 'Low Priority';
+			default: return 'Normal';
+		}
+	};
+
 	return (
 		<div className="container mx-auto w-full xl:w-[60vw] p-12 mt-12">
 			<div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
@@ -255,6 +320,16 @@ const App: React.FC = () => {
 							placeholder="Add a new todo..."
 							className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
 						/>
+						<select
+							value={newTodoLabel}
+							onChange={(e) => setNewTodoLabel(e.target.value)}
+							className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+						>
+							<option value="normal">Normal</option>
+							<option value="important">Important</option>
+							<option value="urgent">Urgent</option>
+							<option value="low">Low Priority</option>
+						</select>
 						<button
 							onClick={addTodo}
 							disabled={!newTodoText.trim()}
@@ -334,15 +409,30 @@ const App: React.FC = () => {
 										onChange={() => toggleTodo(todo.id, todo.completed)}
 										className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
 									/>
-									<span
-										className={`flex-1 ${
-											todo.completed
-												? 'line-through text-gray-500 dark:text-gray-400'
-												: 'text-gray-900 dark:text-gray-100'
-										}`}
-									>
-										{todo.text}
-									</span>
+									<div className="flex items-center gap-2 flex-1">
+										<span
+											className={`flex-1 ${
+												todo.completed
+													? 'line-through text-gray-500 dark:text-gray-400'
+													: 'text-gray-900 dark:text-gray-100'
+											}`}
+										>
+											{todo.text}
+										</span>
+										<div className="flex items-center gap-2">
+											<span className={`w-3 h-3 rounded-full ${getLabelColor(todo.label || 'normal')}`} title={getLabelText(todo.label || 'normal')}></span>
+											<select
+												value={todo.label || 'normal'}
+												onChange={(e) => updateTodoLabel(todo.id, e.target.value)}
+												className="text-xs px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+											>
+												<option value="normal">Normal</option>
+												<option value="important">Important</option>
+												<option value="urgent">Urgent</option>
+												<option value="low">Low Priority</option>
+											</select>
+										</div>
+									</div>
 							<button
 								onClick={() => deleteTodo(todo.id)}
 								disabled={deletingIds.has(todo.id)}
