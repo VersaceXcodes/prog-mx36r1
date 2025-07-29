@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
 interface Todo {
@@ -9,7 +9,7 @@ interface Todo {
 	updated_at: string;
 }
 
-const API_BASE_URL = 'https://123testing-project-yes-api.launchpulse.ai';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 const App: FC = () => {
 	const [todos, setTodos] = useState<Todo[]>([]);
@@ -18,7 +18,7 @@ const App: FC = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	const fetchTodos = async () => {
+	const fetchTodos = useCallback(async () => {
 		try {
 			setError(null);
 			const response = await axios.get(`${API_BASE_URL}/todos`);
@@ -29,7 +29,7 @@ const App: FC = () => {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, []);
 
 	const addTodo = async () => {
 		if (!newTodoText.trim()) return;
@@ -72,7 +72,7 @@ const App: FC = () => {
 
 	useEffect(() => {
 		fetchTodos();
-	}, []);
+	}, [fetchTodos]);
 
 	const filteredTodos = todos.filter(todo => {
 		if (filter === 'active') return !todo.completed;

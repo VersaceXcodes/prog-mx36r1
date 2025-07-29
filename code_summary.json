@@ -1,124 +1,99 @@
 {
   "tech_stack": [
     "React",
-    "TypeScript",
+    "TypeScript", 
     "Vite",
     "Express.js",
+    "SQLite",
     "Node.js",
-    "PostgreSQL",
     "Tailwind CSS",
     "Radix UI",
-    "Redux Toolkit",
-    "React Router",
-    "React Hook Form",
-    "Zod",
-    "Framer Motion",
-    "Lucide React",
-    "Axios",
-    "Socket.io Client",
-    "Recharts",
-    "Date-fns"
+    "Axios"
   ],
   "features": [
     {
-      "name": "Basic React Application",
-      "description": "Simple React application with Vite + React setup",
-      "files": [
-        "src/App.tsx",
-        "src/AppWrapper.tsx",
-        "src/main.tsx"
-      ]
+      "name": "Todo Management",
+      "description": "Full CRUD operations for todo items with completion status",
+      "files": ["src/App.tsx", "server.js"]
     },
     {
-      "name": "UI Component Library",
-      "description": "Comprehensive UI component library based on Radix UI primitives",
-      "files": [
-        "src/components/ui/accordion.tsx",
-        "src/components/ui/alert.tsx",
-        "src/components/ui/avatar.tsx",
-        "src/components/ui/badge.tsx",
-        "src/components/ui/button.tsx",
-        "src/components/ui/card.tsx",
-        "src/components/ui/dialog.tsx",
-        "src/components/ui/dropdown-menu.tsx",
-        "src/components/ui/form.tsx",
-        "src/components/ui/input.tsx",
-        "src/components/ui/select.tsx",
-        "src/components/ui/table.tsx",
-        "src/components/ui/tabs.tsx",
-        "src/components/ui/toast.tsx"
-      ]
+      "name": "Todo Filtering",
+      "description": "Filter todos by status (all, active, completed)",
+      "files": ["src/App.tsx"]
     },
     {
-      "name": "Network Handler",
-      "description": "HTTP request handling with error management and retry logic",
-      "files": [
-        "src/utils/networkHandler.ts"
-      ]
+      "name": "Real-time Todo Statistics",
+      "description": "Display count of active and completed todos",
+      "files": ["src/App.tsx"]
     },
     {
-      "name": "Toast Notification System",
-      "description": "Custom toast notification system with state management",
-      "files": [
-        "src/hooks/use-toast.ts",
-        "src/components/ui/toast.tsx",
-        "src/components/ui/toaster.tsx"
-      ]
+      "name": "Error Handling",
+      "description": "Comprehensive error handling with user-friendly messages",
+      "files": ["src/App.tsx", "src/ErrorBoundary.tsx", "server.js"]
     },
     {
-      "name": "Utility Functions",
-      "description": "Common utility functions for styling and class management",
-      "files": [
-        "src/lib/utils.ts"
-      ]
+      "name": "Loading States",
+      "description": "Loading indicators during API operations",
+      "files": ["src/App.tsx"]
     },
     {
-      "name": "Error Boundary",
-      "description": "React error boundary for handling application errors",
-      "files": [
-        "src/ErrorBoundary.tsx"
-      ]
+      "name": "RESTful API",
+      "description": "Complete REST API for todo operations with SQLite database",
+      "files": ["server.js"]
+    },
+    {
+      "name": "Database Management",
+      "description": "SQLite database with health checks and connection management",
+      "files": ["server.js"]
+    },
+    {
+      "name": "CORS Configuration",
+      "description": "Comprehensive CORS setup for cross-origin requests",
+      "files": ["server.js"]
+    },
+    {
+      "name": "WebSocket Error Handling",
+      "description": "Development-specific WebSocket error filtering",
+      "files": ["src/main.tsx", "src/utils/websocket-fix.ts"]
     }
   ],
-  "database_tables": [],
+  "database_tables": [
+    "todos"
+  ],
   "api_endpoints": [
-    "/",
-    "/*"
+    "GET /",
+    "GET /health", 
+    "GET /api/health",
+    "GET /api/todos",
+    "POST /api/todos",
+    "PUT /api/todos/:id",
+    "DELETE /api/todos/:id",
+    "GET *"
   ],
-  "project_structure": {
-    "frontend": {
-      "framework": "React with Vite",
-      "location": "vitereact/",
-      "build_tool": "Vite",
-      "styling": "Tailwind CSS",
-      "ui_library": "Radix UI",
-      "state_management": "Redux Toolkit",
-      "routing": "React Router",
-      "forms": "React Hook Form with Zod validation"
-    },
-    "backend": {
-      "framework": "Express.js",
-      "database": "PostgreSQL",
-      "location": "server.js, backend/server.js"
-    }
-  },
-  "development_setup": {
-    "frontend_dev": "npm run dev (Vite dev server)",
-    "build": "npm run build",
-    "lint": "npm run lint",
-    "preview": "npm run preview"
-  },
-  "key_dependencies": {
-    "ui_components": "@radix-ui/* components",
-    "state_management": "@reduxjs/toolkit, react-redux, redux-persist",
-    "forms": "react-hook-form, @hookform/resolvers, zod",
-    "styling": "tailwindcss, class-variance-authority, clsx, tailwind-merge",
-    "routing": "react-router-dom",
-    "http_client": "axios",
-    "animations": "framer-motion",
-    "icons": "lucide-react",
-    "charts": "recharts",
-    "date_handling": "date-fns",
-    "real_time": "socket.io-client"
+  "ui_components": [
+    "Todo List",
+    "Add Todo Form",
+    "Filter Buttons",
+    "Todo Items with Checkboxes",
+    "Delete Buttons",
+    "Loading Spinner",
+    "Error Messages",
+    "Statistics Display"
+  ],
+  "key_libraries": {
+    "frontend": [
+      "@radix-ui/react-*",
+      "axios",
+      "react-router-dom",
+      "tailwind-css",
+      "framer-motion",
+      "lucide-react"
+    ],
+    "backend": [
+      "express",
+      "sqlite3",
+      "cors",
+      "dotenv"
+    ]
   }
 }

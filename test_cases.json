@@ -1,258 +1,242 @@
 {
   "testCases": [
     {
-      "id": "app-basic-render",
-      "name": "Basic Application Render Test",
-      "category": "rendering",
+      "id": "functional-app-test",
+      "name": "Functional Application Test",
+      "category": "functionality",
       "priority": "critical",
-      "description": "Test that the main application renders without errors",
+      "description": "Verify the application has actual functionality beyond basic placeholder",
       "steps": [
-        "Navigate to the application root URL",
-        "Verify the page loads successfully",
-        "Check that 'Vite + React' heading is displayed",
-        "Verify no console errors are present"
+        "Navigate to application URL",
+        "Verify page loads without errors",
+        "Check that the page shows 'Todo App' heading",
+        "Verify multiple interactive elements exist (input field, Add button, filter buttons)",
+        "Confirm the application displays a proper todo management interface",
+        "Verify application has real features, not just 'Vite + React' placeholder text"
       ],
-      "expectedOutcome": "Application renders successfully with main heading visible",
-      "selectors": {
-        "mainContainer": ".container.mx-auto",
-        "heading": "h1",
-        "viteReactHeading": "h1:contains('Vite + React')"
-      }
+      "expectedOutcome": "Application shows functional todo management features with proper UI components",
+      "failureCondition": "If page only shows 'Vite + React' placeholder or basic template, this test should FAIL"
     },
     {
-      "id": "error-boundary-functionality",
-      "name": "Error Boundary Handling Test",
-      "category": "error-handling",
+      "id": "todo-creation-test",
+      "name": "Todo Creation Test",
+      "category": "functionality",
+      "priority": "critical",
+      "description": "Test the ability to create new todo items",
+      "steps": [
+        "Navigate to the todo application",
+        "Locate the text input field for adding todos",
+        "Enter a test todo text (e.g., 'Test todo item')",
+        "Click the 'Add' button or press Enter",
+        "Verify the new todo appears in the list",
+        "Check that the input field is cleared after adding"
+      ],
+      "expectedOutcome": "New todo item is successfully created and displayed in the list",
+      "failureCondition": "If todo is not created or not displayed, test fails"
+    },
+    {
+      "id": "todo-completion-test",
+      "name": "Todo Completion Test",
+      "category": "functionality",
       "priority": "high",
-      "description": "Test error boundary catches and displays errors properly",
+      "description": "Test the ability to mark todos as completed",
       "steps": [
-        "Trigger a JavaScript error in a component",
-        "Verify error boundary catches the error",
-        "Check that fallback UI is displayed",
-        "Verify 'Something went wrong' message appears",
-        "Test refresh button functionality"
+        "Navigate to the todo application",
+        "Ensure at least one todo item exists (create one if needed)",
+        "Click the checkbox next to a todo item",
+        "Verify the todo text becomes crossed out or styled as completed",
+        "Check that the todo's completion status changes",
+        "Verify statistics update to reflect the change"
       ],
-      "expectedOutcome": "Error boundary displays fallback UI with refresh option",
-      "selectors": {
-        "errorContainer": ".min-h-screen.flex.items-center",
-        "errorTitle": "h3:contains('Something went wrong')",
-        "refreshButton": "button:contains('Refresh Page')",
-        "errorIcon": "svg"
-      }
+      "expectedOutcome": "Todo item is marked as completed with visual indication",
+      "failureCondition": "If todo completion status doesn't change or no visual feedback, test fails"
     },
     {
-      "id": "ui-button-component",
-      "name": "Button Component Variants Test",
-      "category": "ui-components",
-      "priority": "medium",
-      "description": "Test button component with different variants and sizes",
-      "steps": [
-        "Render button with default variant",
-        "Test button with destructive variant",
-        "Test button with outline variant",
-        "Test button with different sizes (sm, lg, icon)",
-        "Verify hover states work correctly",
-        "Test disabled state"
-      ],
-      "expectedOutcome": "All button variants render correctly with proper styling",
-      "selectors": {
-        "defaultButton": "button.bg-neutral-900",
-        "destructiveButton": "button.bg-red-500",
-        "outlineButton": "button.border.border-neutral-200",
-        "smallButton": "button.h-9",
-        "largeButton": "button.h-11",
-        "disabledButton": "button:disabled"
-      }
-    },
-    {
-      "id": "network-handler-error-handling",
-      "name": "Network Handler Error Management Test",
-      "category": "network",
+      "id": "todo-deletion-test",
+      "name": "Todo Deletion Test",
+      "category": "functionality",
       "priority": "high",
-      "description": "Test network error handling and retry functionality",
+      "description": "Test the ability to delete todo items",
       "steps": [
-        "Make a request to a non-existent endpoint",
-        "Verify 404 error is handled properly",
-        "Test retry mechanism with failing requests",
-        "Test successful request after retries",
-        "Verify proper error messages are displayed"
+        "Navigate to the todo application",
+        "Ensure at least one todo item exists",
+        "Locate the 'Delete' button for a todo item",
+        "Click the Delete button",
+        "Verify the todo item is removed from the list",
+        "Check that statistics update accordingly"
       ],
-      "expectedOutcome": "Network errors are handled gracefully with appropriate messages",
-      "selectors": {
-        "errorMessage": "[data-testid='network-error']",
-        "retryButton": "[data-testid='retry-button']",
-        "loadingIndicator": "[data-testid='loading']"
-      }
+      "expectedOutcome": "Todo item is successfully deleted and removed from the list",
+      "failureCondition": "If todo is not deleted or still appears in list, test fails"
     },
     {
-      "id": "routing-navigation",
-      "name": "React Router Navigation Test",
-      "category": "navigation",
+      "id": "todo-filtering-test",
+      "name": "Todo Filtering Test",
+      "category": "functionality",
       "priority": "medium",
-      "description": "Test React Router navigation functionality",
+      "description": "Test the filtering functionality for todos",
       "steps": [
-        "Navigate to different routes",
-        "Test browser back/forward buttons",
-        "Verify URL changes correctly",
-        "Test catch-all route handling",
-        "Verify page refresh maintains route"
+        "Navigate to the todo application",
+        "Create at least one active and one completed todo",
+        "Click the 'Active' filter button",
+        "Verify only incomplete todos are shown",
+        "Click the 'Completed' filter button",
+        "Verify only completed todos are shown",
+        "Click the 'All' filter button",
+        "Verify all todos are shown"
       ],
-      "expectedOutcome": "Navigation works correctly with proper URL updates",
-      "selectors": {
-        "routerOutlet": "[data-testid='router-outlet']",
-        "navigationLinks": "a[href]",
-        "currentRoute": "[data-testid='current-route']"
-      }
+      "expectedOutcome": "Filtering works correctly for all three states (all, active, completed)",
+      "failureCondition": "If filtering doesn't work or shows incorrect todos, test fails"
     },
     {
-      "id": "toast-notification-system",
-      "name": "Toast Notification System Test",
-      "category": "notifications",
+      "id": "ui-components-test",
+      "name": "UI Components Test",
+      "category": "interface",
+      "priority": "high",
+      "description": "Test that UI components are properly implemented and functional",
+      "steps": [
+        "Navigate to the application",
+        "Verify the main heading 'Todo App' is present",
+        "Check for input field with placeholder text",
+        "Verify 'Add' button is present and clickable",
+        "Check for filter buttons (All, Active, Completed)",
+        "Verify todo items display with checkboxes and delete buttons",
+        "Check for statistics display at the bottom"
+      ],
+      "expectedOutcome": "All UI components are present and properly styled",
+      "failureCondition": "If key UI components are missing or not functional, test fails"
+    },
+    {
+      "id": "loading-states-test",
+      "name": "Loading States Test",
+      "category": "interface",
       "priority": "medium",
-      "description": "Test toast notification display and dismissal",
+      "description": "Test that loading states are properly displayed",
       "steps": [
-        "Trigger a success toast notification",
-        "Verify toast appears with correct styling",
-        "Test toast auto-dismissal after timeout",
-        "Test manual toast dismissal",
-        "Test multiple toasts stacking",
-        "Test different toast variants (error, warning, info)"
+        "Navigate to the application",
+        "Observe initial page load",
+        "Check if loading spinner appears during data fetch",
+        "Verify loading message 'Loading todos...' is shown",
+        "Confirm loading state disappears when data loads"
       ],
-      "expectedOutcome": "Toast notifications display correctly and can be dismissed",
-      "selectors": {
-        "toastContainer": "[data-testid='toast-container']",
-        "successToast": "[data-testid='toast-success']",
-        "errorToast": "[data-testid='toast-error']",
-        "toastDismiss": "[data-testid='toast-dismiss']",
-        "toastMessage": "[data-testid='toast-message']"
-      }
+      "expectedOutcome": "Loading states are properly displayed during data operations",
+      "failureCondition": "If no loading indication is shown or loading never completes, test fails"
     },
     {
-      "id": "responsive-design",
+      "id": "error-handling-test",
+      "name": "Error Handling Test",
+      "category": "reliability",
+      "priority": "medium",
+      "description": "Test that errors are properly handled and displayed",
+      "steps": [
+        "Navigate to the application",
+        "If API is unavailable, verify error message appears",
+        "Check that error messages are user-friendly",
+        "Verify error messages can be dismissed",
+        "Test that the app remains functional after errors"
+      ],
+      "expectedOutcome": "Errors are gracefully handled with appropriate user feedback",
+      "failureCondition": "If errors crash the app or show no feedback, test fails"
+    },
+    {
+      "id": "responsive-design-test",
       "name": "Responsive Design Test",
-      "category": "responsive",
+      "category": "interface",
       "priority": "medium",
-      "description": "Test application responsiveness across different screen sizes",
+      "description": "Test that the application works on different screen sizes",
       "steps": [
-        "Test application on mobile viewport (375px)",
-        "Test application on tablet viewport (768px)",
-        "Test application on desktop viewport (1024px)",
-        "Verify container width adjusts properly (xl:w-[60vw])",
-        "Test component layout on different screen sizes"
+        "Navigate to the application",
+        "Test on desktop viewport (1200px+)",
+        "Test on tablet viewport (768px-1199px)",
+        "Test on mobile viewport (320px-767px)",
+        "Verify all elements remain accessible and functional",
+        "Check that text remains readable at all sizes"
       ],
-      "expectedOutcome": "Application displays correctly on all screen sizes",
-      "selectors": {
-        "mainContainer": ".container.mx-auto.w-full.xl\\:w-\\[60vw\\]",
-        "responsiveElements": "[class*='sm:'], [class*='md:'], [class*='lg:'], [class*='xl:']"
-      }
+      "expectedOutcome": "Application is fully functional and well-designed across all screen sizes",
+      "failureCondition": "If layout breaks or becomes unusable on any screen size, test fails"
     },
     {
-      "id": "form-components-validation",
-      "name": "Form Components and Validation Test",
-      "category": "forms",
+      "id": "data-persistence-test",
+      "name": "Data Persistence Test",
+      "category": "functionality",
       "priority": "high",
-      "description": "Test form components with React Hook Form and Zod validation",
+      "description": "Test that todo data persists across page reloads",
       "steps": [
-        "Render a form with input components",
-        "Test form validation with empty fields",
-        "Test form validation with invalid data",
-        "Test successful form submission",
-        "Verify error messages display correctly",
-        "Test form reset functionality"
+        "Navigate to the application",
+        "Create several todo items",
+        "Mark some as completed",
+        "Refresh the page",
+        "Verify all todos and their states are preserved",
+        "Check that statistics remain accurate"
       ],
-      "expectedOutcome": "Form validation works correctly with proper error handling",
-      "selectors": {
-        "formContainer": "form",
-        "inputField": "input",
-        "submitButton": "button[type='submit']",
-        "errorMessage": "[data-testid='field-error']",
-        "validationError": ".text-red-500"
-      }
+      "expectedOutcome": "All todo data and states persist correctly after page reload",
+      "failureCondition": "If data is lost or states reset after reload, test fails"
     },
     {
-      "id": "accessibility-compliance",
-      "name": "Accessibility Compliance Test",
+      "id": "input-validation-test",
+      "name": "Input Validation Test",
+      "category": "functionality",
+      "priority": "medium",
+      "description": "Test input validation for todo creation",
+      "steps": [
+        "Navigate to the application",
+        "Try to add an empty todo (just spaces)",
+        "Verify empty todos are not created",
+        "Try adding a very long todo text",
+        "Test special characters in todo text",
+        "Verify appropriate handling of edge cases"
+      ],
+      "expectedOutcome": "Input validation prevents invalid todos and handles edge cases gracefully",
+      "failureCondition": "If invalid todos are created or app crashes on invalid input, test fails"
+    },
+    {
+      "id": "keyboard-navigation-test",
+      "name": "Keyboard Navigation Test",
       "category": "accessibility",
-      "priority": "high",
-      "description": "Test application accessibility features and compliance",
-      "steps": [
-        "Test keyboard navigation through components",
-        "Verify ARIA labels are present on interactive elements",
-        "Test screen reader compatibility",
-        "Check color contrast ratios",
-        "Test focus management and indicators",
-        "Verify semantic HTML structure"
-      ],
-      "expectedOutcome": "Application meets accessibility standards and guidelines",
-      "selectors": {
-        "focusableElements": "button, input, select, textarea, a[href]",
-        "ariaLabels": "[aria-label], [aria-labelledby]",
-        "headingStructure": "h1, h2, h3, h4, h5, h6",
-        "skipLinks": "[data-testid='skip-link']"
-      }
-    },
-    {
-      "id": "performance-optimization",
-      "name": "Performance Optimization Test",
-      "category": "performance",
-      "priority": "medium",
-      "description": "Test application performance and loading times",
-      "steps": [
-        "Measure initial page load time",
-        "Test component rendering performance",
-        "Verify lazy loading of components",
-        "Test memory usage during navigation",
-        "Check for memory leaks",
-        "Measure bundle size and optimization"
-      ],
-      "expectedOutcome": "Application performs well with optimized loading times",
-      "selectors": {
-        "performanceMetrics": "[data-testid='performance-metrics']",
-        "loadingIndicators": "[data-testid='loading']",
-        "lazyComponents": "[data-testid='lazy-component']"
-      }
-    },
-    {
-      "id": "backend-api-integration",
-      "name": "Backend API Integration Test",
-      "category": "api-integration",
-      "priority": "critical",
-      "description": "Test integration with backend API endpoints",
-      "steps": [
-        "Test connection to backend health check endpoint (/)",
-        "Verify CORS configuration works correctly",
-        "Test API error handling for failed requests",
-        "Test API response parsing and data handling",
-        "Verify proper HTTP status code handling"
-      ],
-      "expectedOutcome": "Frontend successfully integrates with backend API",
-      "selectors": {
-        "apiStatus": "[data-testid='api-status']",
-        "apiError": "[data-testid='api-error']",
-        "apiResponse": "[data-testid='api-response']"
-      }
-    },
-    {
-      "id": "theme-switching",
-      "name": "Theme Switching Test",
-      "category": "theming",
       "priority": "low",
-      "description": "Test dark/light theme switching functionality",
+      "description": "Test keyboard accessibility and navigation",
       "steps": [
-        "Test default theme application",
-        "Switch to dark theme",
-        "Verify dark theme styles are applied",
-        "Switch back to light theme",
-        "Test theme persistence across page reloads",
-        "Verify all components support both themes"
+        "Navigate to the application",
+        "Use Tab key to navigate through interactive elements",
+        "Test Enter key to add todos from input field",
+        "Use Space key to toggle checkboxes",
+        "Verify all interactive elements are keyboard accessible"
       ],
-      "expectedOutcome": "Theme switching works correctly with proper style application",
-      "selectors": {
-        "themeToggle": "[data-testid='theme-toggle']",
-        "darkThemeElements": ".dark",
-        "lightThemeElements": ":not(.dark)",
-        "themeIndicator": "[data-testid='current-theme']"
-      }
+      "expectedOutcome": "All functionality is accessible via keyboard navigation",
+      "failureCondition": "If key functionality cannot be accessed via keyboard, test fails"
+    },
+    {
+      "id": "content-quality-test",
+      "name": "Content Quality Test",
+      "category": "content",
+      "priority": "high",
+      "description": "Verify application has meaningful content and professional appearance",
+      "steps": [
+        "Navigate to the application",
+        "Check that page has substantial content beyond placeholder",
+        "Verify proper heading structure with 'Todo App' title",
+        "Look for actual application features and functionality",
+        "Ensure professional appearance with proper styling",
+        "Verify the app demonstrates real todo management capabilities"
+      ],
+      "expectedOutcome": "Application demonstrates real functionality with professional design and meaningful content",
+      "failureCondition": "If app appears to be just a template or placeholder without real functionality, test fails"
+    },
+    {
+      "id": "api-integration-test",
+      "name": "API Integration Test",
+      "category": "functionality",
+      "priority": "critical",
+      "description": "Test that frontend properly integrates with backend API",
+      "steps": [
+        "Navigate to the application",
+        "Verify todos load from the backend API",
+        "Create a new todo and confirm it's saved to backend",
+        "Update a todo status and verify backend persistence",
+        "Delete a todo and confirm removal from backend",
+        "Check that all CRUD operations work correctly"
+      ],
+      "expectedOutcome": "Frontend successfully communicates with backend for all operations",
+      "failureCondition": "If API calls fail or data doesn't persist, test fails"
     }
   ]
 }
